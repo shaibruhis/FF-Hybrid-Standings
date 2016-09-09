@@ -1,5 +1,6 @@
 $(document).ready(function() {
 
+
     function getLeagueID() {
         var url = window.location.toString();
         regExp = /leagueId=(\d+)/;
@@ -87,7 +88,7 @@ $(document).ready(function() {
     }
 
 
-    function getResults(row) {
+    function getH2HResults(row) {
         var results = $(row).slice(1,4);
         var numOfWeeks = $.map(results, function(elem) {
             return parseInt($(elem).text(),10);
@@ -97,15 +98,28 @@ $(document).ready(function() {
 
 
     function updateRows(rows) {
-        var results = getResults($(rows[0]).children());
+        var results = getH2HResults($(rows[0]).children());
         var numOfWeeks = getNumOfWeeks(results); // wins + losses + ties
         for (var idx = 0; idx < rows.length; idx++) {
             updateRow($(rows[idx]).children(), numOfWeeks);
         }
     }
 
-    function updateRow(row, numOfWeeks) {
 
+    function editCell(cell, cellText) {
+        
+    }
+
+
+    function editCells(row, results) {
+        for (var idx = 1; idx < NUMBER_OF_COLUMNS; idx++) {
+            $(row[idx]).text(results[idx-1]) // idx starts at one in row because we dont want to edit owner column
+        }
+    }
+
+
+    function updateRow(row, numOfWeeks) {
+        // add cells
         for (var idx = NUMBER_OF_COLUMNS-NUMBER_OF_EXISTING_COLUMNS; idx < NUMBER_OF_COLUMNS; idx++) {
             var newColumn = createNewColumn("");
             $(row).parent().append(newColumn);
@@ -113,9 +127,20 @@ $(document).ready(function() {
 
         owner = $(row).first().children().first().attr('title');
 
-        results = getResults($(row));
+        // get and build results
+        H2HResults = getH2HResults($(row)); // H2H W | H2H L | H2H T
+        // pointsResults = getPointsResults(); // Points W | Points L | Points T
+        results =  H2HResults; // Total W | Total L | Total T
+        // results.concat(H2HResults).concat(pointsResults); // Total W | Total L | Total T | H2H W | H2H L | H2H T | Points W | Points L | Points T
+        var percentage = ((results[0]+(results[2]*0.5))/(2*numOfWeeks)).toFixed(3); // calc % for results
+        percentage = percentage.toString().replace(/^0+/, '');    // remove leading 0
+        results.push(percentage);
+        //TODO: add GB calculation
         console.log(results);
 
+        // edit cells to show results
+        row = $(row).parent().children();   //TODO: replace this with an update function
+        editCells($(row), results);
     }
 
 
