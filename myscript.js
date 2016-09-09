@@ -12,6 +12,7 @@ $(document).ready(function() {
 
     function updateTableWidth(table) {
         $(table).attr('width', '100%');
+        $(table).nextAll().remove()
     }
 
 
@@ -65,7 +66,7 @@ $(document).ready(function() {
         updateTableWidth($(tableHeader).parents('td:first'));
         updateHeaderColumns($(tableHeader));
         updateSubHeaderColumns($(tableHeader).next());
-        // updateRows(tableHeader.nextAll().slice(1));  // we want to skip over the subheader and update all the rows after that
+        // updateRows($(tableHeader).nextAll().slice(1));  // we want to skip over the subheader and update all the rows after that
     }
 
     addHybridDataToTable();
