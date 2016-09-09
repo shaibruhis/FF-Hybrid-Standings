@@ -38,7 +38,7 @@
     {
       "matches": ["http://games.espn.com/ffl/standings?*"],
       // "css": ["mystyles.css"],
-      "js": ["jquery-3.1.0.min.js", "myscript.js"],
+      "js": ["jquery-3.1.0.min.js", "content_script.js"],
       "run_at": "document_end"
     }
   ],
