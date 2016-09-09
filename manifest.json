@@ -1,0 +1,93 @@
+{
+  // Required
+  "manifest_version": 2,
+  "name": "Hybrid Fantasy Standings",
+  "version": "0.1",
+
+  // Recommended
+  // "default_locale": "en",
+  "description": "Adds ability to see standings of a league which uses a hybrid (H2H winner and highest points) scoring system.",
+  // "icons": { "16": "icon16.png",
+  //          "48": "icon48.png",
+  //         "128": "icon128.png" },
+
+  // Pick one (or none)
+  // "browser_action": {...},
+  // "page_action": {...},
+
+  // Optional
+  // "author": ...,
+  // "automation": ...,
+  // "background": {
+  //   "scripts":: ["eventPage.js"],
+  //   // Recommended
+  //   "persistent": false
+  // },
+  // "background_page": ...,
+  // "chrome_settings_overrides": {...},
+  // "chrome_ui_overrides": {
+  //   "bookmarks_ui": {
+  //     "remove_bookmark_shortcut": true,
+  //     "remove_button": true
+  //   }
+  // },
+  // "chrome_url_overrides": {...},
+  // "commands": {...},
+  // "content_capabilities": ...,
+  "content_scripts": [
+    {
+      "matches": ["http://games.espn.com/ffl/standings?*"],
+      // "css": ["mystyles.css"],
+      "js": ["jquery-3.1.0.min.js", "myscript.js"],
+      "run_at": "document_end"
+    }
+  ],
+  // "content_security_policy": "policyString",  //https://developer.chrome.com/extensions/contentSecurityPolicy#interactions
+  // "converted_from_user_script": ...,
+  // "current_locale": ...,
+  // "devtools_page": "devtools.html",
+  // "event_rules": [{...}],
+  // "externally_connectable": {
+  //   "matches": ["*://*.example.com/*"]
+  // },
+  // "file_browser_handlers": [...],
+  // "file_system_provider_capabilities": {
+  //   "configurable": true,
+  //   "multiple_mounts": true,
+  //   "source": "network"
+  // },
+  // "homepage_url": "http://path/to/homepage",
+  // "import": [{"id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}],
+  "incognito": "not_allowed",
+  // "input_components": ...,
+  // "key": "publicKey",
+  // "minimum_chrome_version": "versionString",
+  // "nacl_modules": [...],
+  // "oauth2": ...,
+  // "offline_enabled": true,
+  // "omnibox": {
+  //   "keyword": "aString"
+  // },
+  // "optional_permissions": ["tabs"],
+  // "options_page": "options.html",
+  // "options_ui": {
+  //   "chrome_style": true,
+  //   "page": "options.html"
+  // },
+  // "permissions": ["tabs"],
+  // "platforms": ...,
+  // "plugins": [...],
+  // "requirements": {...},
+  // "sandbox": [...],
+  "short_name": "Hybrid Standings",
+  // "signature": ...,
+  // "spellcheck": ...,
+  // "storage": {
+  //   "managed_schema": "schema.json"
+  // },
+  // "system_indicator": ...,
+  // "tts_engine": {...},
+  // "update_url": "http://path/to/updateInfo.xml",
+  "version_name": "0.1 developement"
+  // "web_accessible_resources": [...]
+}
