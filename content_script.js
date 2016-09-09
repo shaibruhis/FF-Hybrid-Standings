@@ -97,6 +97,19 @@ $(document).ready(function() {
     }
 
 
+    function getPointsResults(owner) {
+        return [3,9,1];
+    }
+
+    function getTotalResults(H2HResults, pointsResults) {
+        returnArray = [3];
+        for (var idx = 0; idx < H2HResults.length; idx++) {
+            returnArray[idx] = H2HResults[idx] + pointsResults[idx];
+        }
+        return returnArray;
+    }
+
+
     function updateRows(rows) {
         var results = getH2HResults($(rows[0]).children());
         var numOfWeeks = getNumOfWeeks(results); // wins + losses + ties
@@ -106,15 +119,16 @@ $(document).ready(function() {
     }
 
 
-    function editCell(cell, cellText) {
-        
-    }
-
-
     function editCells(row, results) {
         for (var idx = 1; idx < NUMBER_OF_COLUMNS; idx++) {
             $(row[idx]).text(results[idx-1]) // idx starts at one in row because we dont want to edit owner column
         }
+    }
+
+
+    function getPercentage(results, numOfWeeks) {
+        var percentage = ((results[0]+(results[2]*0.5))/(2*numOfWeeks)).toFixed(3); // calc % for results
+        return percentage.toString().replace(/^0+/, '');    // remove leading 0  
     }
 
 
@@ -129,15 +143,11 @@ $(document).ready(function() {
 
         // get and build results
         H2HResults = getH2HResults($(row)); // H2H W | H2H L | H2H T
-        // pointsResults = getPointsResults(); // Points W | Points L | Points T
-        results =  H2HResults; // Total W | Total L | Total T
-        // results.concat(H2HResults).concat(pointsResults); // Total W | Total L | Total T | H2H W | H2H L | H2H T | Points W | Points L | Points T
-        var percentage = ((results[0]+(results[2]*0.5))/(2*numOfWeeks)).toFixed(3); // calc % for results
-        percentage = percentage.toString().replace(/^0+/, '');    // remove leading 0
-        results.push(percentage);
-        //TODO: add GB calculation
-        console.log(results);
-
+        pointsResults = getPointsResults(owner); // Points W | Points L | Points T
+        var results = getTotalResults(H2HResults, pointsResults);
+        results = results.concat(H2HResults, pointsResults);    // Total W | Total L | Total T | H2H W | H2H L | H2H T | Points W | Points L | Points T
+        results.push(getPercentage(results, numOfWeeks));   // add % to results array
+        results.push('--'); //TODO: implement GB calculation (might be better to populate and sort table and then do calculation)
         // edit cells to show results
         row = $(row).parent().children();   //TODO: replace this with an update function
         editCells($(row), results);
