@@ -2,9 +2,20 @@ $(document).ready(function() {
 
     function getLeagueID() {
         var url = window.location.toString();
-        regExp = /leagueId=(\d+)&/;
+        regExp = /leagueId=(\d+)/;
         var matches = regExp.exec(url);
         return matches[1];
+    }
+
+    function getSeasonID() {
+        var seasonID = "2016"
+        var url = window.location.toString();
+        regExp = /seasonId=(\d+)/;
+        var matches = regExp.exec(url);
+        if (matches[1]) {
+            seasonID = matches[1];
+        }
+        return seasonID;
     }
 
     const TABLE_HEADER = '.tableHead';
@@ -13,6 +24,7 @@ $(document).ready(function() {
     const COLUMN_WIDTH = ((100-OWNER_COLUMN_WIDTH)/NUMBER_OF_COLUMNS).toString() + '%';
     const COLUMN_HEADERS = ['Team', 'Total W', 'Total L', 'Total T', 'H2H W', 'H2H L', 'H2H T', 'Points W', 'Points L', 'Points T', 'PCT', 'GB']
     const LEAGUE_ID = getLeagueID();
+    const SEASON_ID = getSeasonID();
 
 
     function updateHeaderColumns(tableHeader) {
