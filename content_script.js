@@ -21,6 +21,7 @@ $(document).ready(function() {
     const TABLE_HEADER = '.tableHead';
     const OWNER_COLUMN_WIDTH = 22;
     const NUMBER_OF_COLUMNS = 12;
+    const NUMBER_OF_EXISTING_COLUMNS = 6;
     const COLUMN_WIDTH = ((100-OWNER_COLUMN_WIDTH)/NUMBER_OF_COLUMNS).toString() + '%';
     const COLUMN_HEADERS = ['Team', 'Total W', 'Total L', 'Total T', 'H2H W', 'H2H L', 'H2H T', 'Points W', 'Points L', 'Points T', 'PCT', 'GB']
     const LEAGUE_ID = getLeagueID();
@@ -33,7 +34,18 @@ $(document).ready(function() {
 
     function updateTableWidth(table) {
         $(table).attr('width', '100%');
-        $(table).nextAll().remove()
+        $(table).nextAll().remove();    // get rid of weird whitespace on right side of table
+    }
+
+
+    function createNewColumn(columnText) {
+        var columnCell = $('<td></td>').text(columnText);
+        columnCell.attr({
+            align: 'right',
+            width:  COLUMN_WIDTH,
+            title:  columnText
+        }); 
+        return columnCell;
     }
 
 
@@ -49,12 +61,7 @@ $(document).ready(function() {
         }
         // create and add the new ones
         else {
-            var columnSubHeader = $('<td></td>').text(columnHeaderText);
-            columnSubHeader.attr({
-                align: 'right',
-                width:  COLUMN_WIDTH,
-                title:  columnHeaderText
-            });
+            var columnSubHeader = createNewColumn(columnHeaderText);
             $(subHeaderColumns).parent().append(columnSubHeader);
         }
     }
@@ -75,15 +82,39 @@ $(document).ready(function() {
     }
 
 
-    function updateRows(rows) {
-        for (var idx = 0; idx < rows.length; idx++) {
-            updateRow(rows[idx].children());
-        }
+    function getNumOfWeeks(results) {
+        return numOfWeeks = results.reduce(function(a,b) {return a+b;}, 0);
     }
 
 
-    function updateRow(row) {
-        owner = row[0].first().attr('title');
+    function getResults(row) {
+        var results = $(row).slice(1,4);
+        var numOfWeeks = $.map(results, function(elem) {
+            return parseInt($(elem).text(),10);
+        });
+        return numOfWeeks;
+    }
+
+
+    function updateRows(rows) {
+        var results = getResults($(rows[0]).children());
+        var numOfWeeks = getNumOfWeeks(results); // wins + losses + ties
+        for (var idx = 0; idx < rows.length; idx++) {
+            updateRow($(rows[idx]).children(), numOfWeeks);
+        }
+    }
+
+    function updateRow(row, numOfWeeks) {
+
+        for (var idx = NUMBER_OF_COLUMNS-NUMBER_OF_EXISTING_COLUMNS; idx < NUMBER_OF_COLUMNS; idx++) {
+            var newColumn = createNewColumn("");
+            $(row).parent().append(newColumn);
+        }
+
+        owner = $(row).first().children().first().attr('title');
+
+        results = getResults($(row));
+        console.log(results);
 
     }
 
@@ -93,7 +124,7 @@ $(document).ready(function() {
         updateTableWidth($(tableHeader).parents('td:first'));
         updateHeaderColumns($(tableHeader));
         updateSubHeaderColumns($(tableHeader).next());
-        // updateRows($(tableHeader).nextAll().slice(1));  // we want to skip over the subheader and update all the rows after that
+        updateRows($(tableHeader).nextAll().slice(1));  // we want to skip over the subheader and update all the rows after that
     }
 
     addHybridDataToTable();
