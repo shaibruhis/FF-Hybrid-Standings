@@ -17,16 +17,22 @@ $(document).ready(function() {
 
 
     function editSubHeaderColumn(columnIdx, subHeaderColumns) {
+        var columnHeaderText = COLUMN_HEADERS[columnIdx];
         // edit the preexisiting ones
         if (columnIdx <= 5) {
-            $(subHeaderColumns[columnIdx]).text(COLUMN_HEADERS[columnIdx]).attr('width', COLUMN_WIDTH);    
+            $(subHeaderColumns[columnIdx]).text(columnHeaderText)
+            $(subHeaderColumns[columnIdx]).attr({
+                width: COLUMN_WIDTH,
+                title: columnHeaderText
+            });
         }
         // create and add the new ones
         else {
-            var columnSubHeader = $('<td></td>').text(COLUMN_HEADERS[columnIdx]);
+            var columnSubHeader = $('<td></td>').text(columnHeaderText);
             columnSubHeader.attr({
                 align: 'right',
-                width:  COLUMN_WIDTH
+                width:  COLUMN_WIDTH,
+                title:  columnHeaderText
             });
             $(subHeaderColumns).parent().append(columnSubHeader);
         }
