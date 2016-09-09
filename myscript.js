@@ -2,6 +2,7 @@ $(document).ready(function() {
 
     function getLeagueID() {
         var url = window.location.toString();
+        regExp = /leagueId=(\d+)&/;
         var matches = regExp.exec(url);
         return matches[1];
     }
