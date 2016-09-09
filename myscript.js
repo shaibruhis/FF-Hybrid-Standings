@@ -1,10 +1,18 @@
 $(document).ready(function() {
 
+    function getLeagueID() {
+        var url = window.location.toString();
+        var matches = regExp.exec(url);
+        return matches[1];
+    }
+
     const TABLE_HEADER = '.tableHead';
     const OWNER_COLUMN_WIDTH = 22;
     const NUMBER_OF_COLUMNS = 12;
     const COLUMN_WIDTH = ((100-OWNER_COLUMN_WIDTH)/NUMBER_OF_COLUMNS).toString() + '%';
     const COLUMN_HEADERS = ['Team', 'Total W', 'Total L', 'Total T', 'H2H W', 'H2H L', 'H2H T', 'Points W', 'Points L', 'Points T', 'PCT', 'GB']
+    const LEAGUE_ID = getLeagueID();
+
 
     function updateHeaderColumns(tableHeader) {
         $(tableHeader.children()[0]).attr('colspan', NUMBER_OF_COLUMNS.toString()); // increase width of header to account for added columns
