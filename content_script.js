@@ -24,7 +24,7 @@ $(document).ready(function() {
     const NUMBER_OF_COLUMNS = 12;
     const NUMBER_OF_EXISTING_COLUMNS = 6;
     const COLUMN_WIDTH = ((100-OWNER_COLUMN_WIDTH)/NUMBER_OF_COLUMNS).toString() + '%';
-    const COLUMN_HEADERS = ['Team', 'Total W', 'Total L', 'Total T', 'H2H W', 'H2H L', 'H2H T', 'Points W', 'Points L', 'Points T', 'PCT', 'GB'];
+    const COLUMN_HEADERS = ['TEAM', 'TOTAL W', 'TOTAL L', 'TOTAL T', 'H2H W', 'H2H L', 'H2H T', 'POINTS W', 'POINTS L', 'POINTS T', 'PCT', 'GB'];
     const LEAGUE_ID = getLeagueID();
     const SEASON_ID = getSeasonID();
     const SCOREBOARD_URL = 'http://games.espn.com/ffl/scoreboard?leagueId='+LEAGUE_ID+'&seasonId='+SEASON_ID+'&matchupPeriodId=';
@@ -157,22 +157,39 @@ $(document).ready(function() {
 
     function reformatTableHeader(tableHeader) {
         updateTableWidth($(tableHeader).parents('td:first'));
-        $(tableHeader).parents('tbody:first').before('<thead></thead>');
+        // $(tableHeader).parents('tbody:first').before('<thead></thead>');
         updateHeaderColumns($(tableHeader));
         updateSubHeaderColumns($(tableHeader).next());
         // move the subheader into the <thead>, have to do this first because we are referencing it from tableHeader
-        jQuery($(tableHeader).next()).detach().appendTo('thead');
+        // jQuery($(tableHeader).next()).detach().appendTo('thead');
         // then we can move tableHeader
-        jQuery(tableHeader).detach().prependTo('thead');
+        // jQuery(tableHeader).detach().prependTo('thead');
+    }
+
+    // pasted in:
+    /*** Copyright 2013 Teun Duynstee Licensed under the Apache License, Version 2.0 ***/
+    var firstBy=function(){function n(n){return n}function t(n){return"string"==typeof n?n.toLowerCase():n}function r(r,e){if(e="number"==typeof e?{direction:e}:e||{},"function"!=typeof r){var u=r;r=function(n){return n[u]?n[u]:""}}if(1===r.length){var i=r,o=e.ignoreCase?t:n;r=function(n,t){return o(i(n))<o(i(t))?-1:o(i(n))>o(i(t))?1:0}}return-1===e.direction?function(n,t){return-r(n,t)}:r}function e(n,t){return n=r(n,t),n.thenBy=u,n}function u(n,t){var u=this;return n=r(n,t),e(function(t,r){return u(t,r)||n(t,r)})}return e}();
+
+
+    function sortRows(rows) {
+        var sortedRows = $(rows).sort(
+            firstBy(function(a,b) { return parseInt($($(a).children()[1]).text()) - parseInt($($(b).children()[1]).text()); }, -1) // TOTAL W
+            .thenBy(function(a,b) { return parseInt($($(a).children()[4]).text()) - parseInt($($(b).children()[4]).text()); }, -1)  // H2H W
+            .thenBy(function(a,b) { return parseInt($($(a).children()[7]).text()) - parseInt($($(b).children()[7]).text()); }, -1)  // POINTS W
+        );
+
+
+        $(rows).parents('tbody:first').append(sortedRows);  // replace old tables
     }
 
 
     function addHybridDataToTable() {
         var tableHeader = $(TABLE_HEADER)[0];   // 2 tables on this page and we want the first one
         // get rows before we rearrange html elements
-        var rows = $(tableHeader).nextAll().slice(1)
+        // var rows = $(tableHeader).nextAll().slice(1)
         reformatTableHeader($(tableHeader));
-        updateRows($(rows));  // we want to skip over the subheader and update all the rows after that
+        updateRows($(tableHeader).nextAll().slice(1));  // we want to skip over the subheader and update all the rows after that
+        // var tableHeader = $(TABLE_HEADER)[0]; // need to update tableHeader
     }
 
 
@@ -219,6 +236,7 @@ $(document).ready(function() {
                 count++;
                 if(count > numOfWeeks - 1) {
                     completionHandler(rows, pointsResults);
+                    sortRows(rows);
                 }
             });
         }
