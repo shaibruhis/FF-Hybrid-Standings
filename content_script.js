@@ -185,7 +185,7 @@ $(document).ready(function() {
 
 
         
-        console.log(rows);
+        // console.log(rows);
 
         var sortedRows = $(rows).sort(
             firstBy(function(a,b) { return parseInt($($(a).children()[1]).text()) - parseInt($($(b).children()[1]).text()); }, -1) // TOTAL W
@@ -232,10 +232,23 @@ $(document).ready(function() {
             }
         }
         scoreObjects = scoreObjects.slice(0,scoreObjects.length/2);
-        // store into pointsResults
-        for (var idx = 0; idx < scoreObjects.length; idx++) {
-            pointsResults[scoreObjects[idx].owner][0] += 1;
+
+        // adds results to pointresults
+        var flag;
+        for (var key in pointsResults) {
+            flag = 0;
+            for (var idx in scoreObjects) {
+                if (key == scoreObjects[idx]['owner']) {
+                    pointsResults[key][0] += 1;
+                    flag = 1;
+                    break;
+                }
+            }
+            if (!flag) {
+                pointsResults[key][1] += 1;
+            }
         }
+
         return pointsResults;
     }
 
