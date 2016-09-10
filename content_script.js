@@ -28,6 +28,8 @@ $(document).ready(function() {
     const LEAGUE_ID = getLeagueID();
     const SEASON_ID = getSeasonID();
     const SCOREBOARD_URL = 'http://games.espn.com/ffl/scoreboard?leagueId='+LEAGUE_ID+'&seasonId='+SEASON_ID+'&matchupPeriodId=';
+    const LIGHT_BG_COLOR = '#f8f8f2';
+    const DARK_BG_COLOR = '#f2f2e8';
 
 
     // make the head span across all columns (subheaders)
@@ -168,6 +170,16 @@ $(document).ready(function() {
 
     }
 
+
+    function fixRowBGColor(sortedRows) {
+        for (var idx = 0; idx < sortedRows.length; idx+=2) {
+            $(sortedRows[idx]).attr('bgColor', LIGHT_BG_COLOR);  // light color
+        }
+        for (var idx = 1; idx < sortedRows.length; idx+=2) {
+            $(sortedRows[idx]).attr('bgColor', DARK_BG_COLOR);  // dark color
+        }
+    }
+
     // pasted in:
     /*** Copyright 2013 Teun Duynstee Licensed under the Apache License, Version 2.0 ***/
     var firstBy=function(){function n(n){return n}function t(n){return"string"==typeof n?n.toLowerCase():n}function r(r,e){if(e="number"==typeof e?{direction:e}:e||{},"function"!=typeof r){var u=r;r=function(n){return n[u]?n[u]:""}}if(1===r.length){var i=r,o=e.ignoreCase?t:n;r=function(n,t){return o(i(n))<o(i(t))?-1:o(i(n))>o(i(t))?1:0}}return-1===e.direction?function(n,t){return-r(n,t)}:r}function e(n,t){return n=r(n,t),n.thenBy=u,n}function u(n,t){var u=this;return n=r(n,t),e(function(t,r){return u(t,r)||n(t,r)})}return e}();
@@ -183,10 +195,6 @@ $(document).ready(function() {
         }
         $(pointsFor).hide();
 
-
-        
-        // console.log(rows);
-
         var sortedRows = $(rows).sort(
             firstBy(function(a,b) { return parseInt($($(a).children()[1]).text()) - parseInt($($(b).children()[1]).text()); }, -1) // TOTAL W
             .thenBy(function(a,b) { return parseInt($($(a).children()[4]).text()) - parseInt($($(b).children()[4]).text()); }, -1)  // H2H W
@@ -194,6 +202,8 @@ $(document).ready(function() {
             .thenBy(function(a,b) { return parseFloat($($(a).children()[12]).text()) - parseFloat($($(b).children()[12]).text()); }, -1) // PF
         );
         $(rows).parents('tbody:first').append(sortedRows);  // replace old tables
+
+        fixRowBGColor(sortedRows);
     }
 
 
@@ -251,6 +261,9 @@ $(document).ready(function() {
 
         return pointsResults;
     }
+
+
+
 
 
     function getPointsResults(numOfWeeks, rows, completionHandler) {
