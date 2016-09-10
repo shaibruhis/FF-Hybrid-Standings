@@ -262,8 +262,22 @@ $(document).ready(function() {
         return pointsResults;
     }
 
+    function getWins(rows, idx) {
+        var columns = $(rows[idx]).children();
+        return parseFloat($(columns[1]).text()) + (parseFloat($(columns[3]).text())*0.5);    // W + T
+    }
 
-
+    function addGBInfo() {
+        var rows = $($(TABLE_HEADER)[0]).nextAll().slice(1);
+        var leaderWins = getWins(rows, 0);
+        for (var idx = 1; idx < rows.length; idx++) {
+            var itrWins = getWins(rows, idx);
+            var diff = leaderWins - itrWins;
+            if (diff) {
+                $($(rows[idx]).children()[11]).text(diff);
+            }
+        }
+    }
 
 
     function getPointsResults(numOfWeeks, rows, completionHandler) {
@@ -277,6 +291,7 @@ $(document).ready(function() {
                 if(count > numOfWeeks - 1) {
                     completionHandler(rows, pointsResults);
                     sortRows(rows);
+                    addGBInfo();
                 }
             });
         }
