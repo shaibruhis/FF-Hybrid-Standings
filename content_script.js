@@ -164,6 +164,8 @@ $(document).ready(function() {
         // jQuery($(tableHeader).next()).detach().appendTo('thead');
         // then we can move tableHeader
         // jQuery(tableHeader).detach().prependTo('thead');
+
+
     }
 
     // pasted in:
@@ -172,13 +174,25 @@ $(document).ready(function() {
 
 
     function sortRows(rows) {
+
+        // add PF column to table for sorting purposes. it will be hidden on the UI
+        var pointsFor = $('.sortablePF').clone();
+
+        for (var idx = 0; idx < rows.length; idx++) {
+            $(rows[idx]).append(pointsFor[idx]);
+        }
+        $(pointsFor).hide();
+
+
+        
+        console.log(rows);
+
         var sortedRows = $(rows).sort(
             firstBy(function(a,b) { return parseInt($($(a).children()[1]).text()) - parseInt($($(b).children()[1]).text()); }, -1) // TOTAL W
             .thenBy(function(a,b) { return parseInt($($(a).children()[4]).text()) - parseInt($($(b).children()[4]).text()); }, -1)  // H2H W
             .thenBy(function(a,b) { return parseInt($($(a).children()[7]).text()) - parseInt($($(b).children()[7]).text()); }, -1)  // POINTS W
+            .thenBy(function(a,b) { return parseFloat($($(a).children()[12]).text()) - parseFloat($($(b).children()[12]).text()); }, -1) // PF
         );
-
-
         $(rows).parents('tbody:first').append(sortedRows);  // replace old tables
     }
 
