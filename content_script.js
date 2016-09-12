@@ -219,12 +219,12 @@ $(document).ready(function() {
 
     function parseHTML(HTML, pointsResults) {
         var scoreObjects = {};      // {100: [owner1], 98.7: [owner2,owner3], etc}
-        var owners = [];
+        var allOwners = [];
         // populate scoresObject
         var scoresArray = $(HTML).find('[id^=teamscrg_]');
         for (var idx = 0; idx < scoresArray.length; idx++) {
             var owner = $(scoresArray[idx]).find('a').attr('title');
-            owners.push(owner);     // build array of owners
+            allOwners.push(owner);     // build array of allOwners
             var score = $(scoresArray[idx]).find('.score').attr('title');
             if (score in scoreObjects) {
                 scoreObjects[score].push(owner);
@@ -239,8 +239,8 @@ $(document).ready(function() {
 
         // initialize pointsResults
         if (jQuery.isEmptyObject(pointsResults)) {
-            for (var idx = 0; idx < owners.length; idx++) {
-                pointsResults[owners[idx]] = [0,0,0];
+            for (var idx = 0; idx < allOwners.length; idx++) {
+                pointsResults[allOwners[idx]] = [0,0,0];
             }
         }
 
@@ -251,10 +251,10 @@ $(document).ready(function() {
         for (var scoreIdx = 0; scoreIdx < scoreObjectsKeys.length; scoreIdx++) {
             var owners = scoreObjects[scoreObjectsKeys[scoreIdx]];
             for (var ownerIdx = 0; ownerIdx < owners.length; ownerIdx++) {
-                if (count < 6) {    // only consider a "tie" if the 6th highest score has multiple people
+                if (count < allOwners.length/2) {    // only consider a "tie" if the 6th highest score has multiple people
                     pointsResults[owners[ownerIdx]][0]++;  // increase owners wins by 1
                 }
-                else if (count == 6) {
+                else if (count == allOwners.length/2) {
                     if (owners.length == 1) {
                         pointsResults[owners[ownerIdx]][0]++;  // increase owners wins by 1
                     }
