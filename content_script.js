@@ -218,44 +218,55 @@ $(document).ready(function() {
 
 
     function parseHTML(HTML, pointsResults) {
-        var scoreObjects = [];      // [{owner:'owner1', score:100}, {owner:'owner2', score:97}, etc]
-
+        var scoreObjects = {};      // {100: [owner1], 98.7: [owner2,owner3], etc}
+        var owners = [];
+        // populate scoresObject
         var scoresArray = $(HTML).find('[id^=teamscrg_]');
-        console.log(scoresArray);
         for (var idx = 0; idx < scoresArray.length; idx++) {
             var owner = $(scoresArray[idx]).find('a').attr('title');
+            owners.push(owner);     // build array of owners
             var score = $(scoresArray[idx]).find('.score').attr('title');
-            var obj = {}
-            obj['owner'] = owner;
-            obj['score'] = parseFloat(score);
-            scoreObjects.push(obj);
+            if (score in scoreObjects) {
+                scoreObjects[score].push(owner);
+            }
+            else {
+                scoreObjects[score] = [owner];   
+            }
         }
 
-        scoreObects = scoreObjects.sort(function(a, b) { return b.score-a.score; } );
-
+        // get keys and sort them so we can get high scores from dict
+        var scoreObjectsKeys = Object.keys(scoreObjects).sort(function(a, b) { return parseFloat(b)-parseFloat(a); } );
         // initialize pointsResults
         if (jQuery.isEmptyObject(pointsResults)) {
-            for (var idx = 0; idx < scoreObjects.length; idx++) {
-                var obj = {};
-                pointsResults[scoreObjects[idx].owner] = [0,0,0];
+            for (var idx = 0; idx < owners.length; idx++) {
+                pointsResults[owners[idx]] = [0,0,0];
             }
         }
-        scoreObjects = scoreObjects.slice(0,scoreObjects.length/2);
+        // scoreObjects = scoreObjects.slice(0,scoreObjects.length/2);
+
+        // JUST KEEP TRACK OF 3 LISTS, WINNERS = TOP 5 SCORES, TIES = 6TH SCORE, LOSSES = EVERYONE ELSE
 
         // adds results to pointresults
-        var flag;
-        for (var key in pointsResults) {
-            flag = 0;
-            for (var idx in scoreObjects) {
-                if (key == scoreObjects[idx]['owner']) {
-                    pointsResults[key][0] += 1;
-                    flag = 1;
-                    break;
+        var count = 1
+        for (var scoreIdx = 0; scoreIdx < scoreObjectsKeys.length; scoreIdx++) {
+            var owners = scoreObjects[scoreObjectsKeys[scoreIdx]];
+            for (var ownerIdx = 0; ownerIdx < owners.length; ownerIdx++) {
+                if (count < 6) {    // only consider a "tie" if the 6th highest score has multiple people
+                    pointsResults[owners[ownerIdx]][0]++;  // increase owners wins by 1
+                }
+                else if (count == 6) {
+                    if (owners.length == 1) {
+                        pointsResults[owners[ownerIdx]][0]++;  // increase owners wins by 1
+                    }
+                    else {
+                        pointsResults[owners[ownerIdx]][2]++;  // increase owners ties by 1
+                    }
+                }
+                else {
+                    pointsResults[owners[ownerIdx]][1]++;  // increase owners losses by 1
                 }
             }
-            if (!flag) {
-                pointsResults[key][1] += 1;
-            }
+            count += owners.length // increase the count by the number of people that had this score
         }
 
         return pointsResults;
