@@ -236,13 +236,13 @@ $(document).ready(function() {
 
         // get keys and sort them so we can get high scores from dict
         var scoreObjectsKeys = Object.keys(scoreObjects).sort(function(a, b) { return parseFloat(b)-parseFloat(a); } );
+
         // initialize pointsResults
         if (jQuery.isEmptyObject(pointsResults)) {
             for (var idx = 0; idx < owners.length; idx++) {
                 pointsResults[owners[idx]] = [0,0,0];
             }
         }
-        // scoreObjects = scoreObjects.slice(0,scoreObjects.length/2);
 
         // JUST KEEP TRACK OF 3 LISTS, WINNERS = TOP 5 SCORES, TIES = 6TH SCORE, LOSSES = EVERYONE ELSE
 
@@ -268,7 +268,6 @@ $(document).ready(function() {
             }
             count += owners.length // increase the count by the number of people that had this score
         }
-
         return pointsResults;
     }
 
@@ -298,7 +297,7 @@ $(document).ready(function() {
             $.get(SCOREBOARD_URL+weekNum, function(data) {
                 pointsResults = parseHTML(data, pointsResults);
                 count++;
-                if(count > numOfWeeks - 1) {
+                if(count > numOfWeeks - 1) {    // make sure all async calls completed
                     completionHandler(rows, pointsResults);
                     sortRows(rows);
                     addGBInfo();
