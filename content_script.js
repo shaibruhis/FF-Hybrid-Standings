@@ -213,7 +213,6 @@ $(document).ready(function() {
         // var rows = $(tableHeader).nextAll().slice(1)
         reformatTableHeader($(tableHeader));
         updateRows($(tableHeader).nextAll().slice(1));  // we want to skip over the subheader and update all the rows after that
-        // var tableHeader = $(TABLE_HEADER)[0]; // need to update tableHeader
     }
 
 
@@ -222,6 +221,7 @@ $(document).ready(function() {
         var scoreObjects = [];      // [{owner:'owner1', score:100}, {owner:'owner2', score:97}, etc]
 
         var scoresArray = $(HTML).find('[id^=teamscrg_]');
+        console.log(scoresArray);
         for (var idx = 0; idx < scoresArray.length; idx++) {
             var owner = $(scoresArray[idx]).find('a').attr('title');
             var score = $(scoresArray[idx]).find('.score').attr('title');
@@ -231,10 +231,9 @@ $(document).ready(function() {
             scoreObjects.push(obj);
         }
 
-        scoreObects = scoreObjects.sort(function(a, b) {
-            return b.score-a.score;
-        });
+        scoreObects = scoreObjects.sort(function(a, b) { return b.score-a.score; } );
 
+        // initialize pointsResults
         if (jQuery.isEmptyObject(pointsResults)) {
             for (var idx = 0; idx < scoreObjects.length; idx++) {
                 var obj = {};
