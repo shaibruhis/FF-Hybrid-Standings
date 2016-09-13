@@ -22,7 +22,7 @@ Future Ideas
 
 Known Issues
 ------
-* 
+* GB doesn't update for divisions
 
 Update Log
 ------
