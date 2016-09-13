@@ -13,7 +13,7 @@ Hybrid scoring is a combination of H2H and points based scoring that eliminates 
 
  It looks like this:
 
-![Main Preview](github_screenshot1.png)
+![Main Preview](assets/github_screenshot1.png)
 
 
 Future Ideas
