@@ -24,3 +24,7 @@ Update Log
 ------
 * v0.1 (9/13/16)
   * Initial release
+ 
+Thanks
+------
+* Brett Woodward's [FantasyPlus](https://github.com/flipperbw/FantasyPlus) and Thomas Beutler's [FantasyTargets](https://github.com/tcbeutler/FantasyTargets) for providing me with inspiration to build this and give back to the Fantasy community
