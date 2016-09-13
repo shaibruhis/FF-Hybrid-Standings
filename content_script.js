@@ -208,11 +208,29 @@ $(document).ready(function() {
 
 
     function addHybridDataToTable() {
-        var tableHeader = $(TABLE_HEADER)[0];   // 2 tables on this page and we want the first one
-        // get rows before we rearrange html elements
-        // var rows = $(tableHeader).nextAll().slice(1)
-        reformatTableHeader($(tableHeader));
-        updateRows($(tableHeader).nextAll().slice(1));  // we want to skip over the subheader and update all the rows after that
+        // get all tables
+        var tableHeader = $(TABLE_HEADER);
+
+        // move tables that are on the right side of the page (multiple divisions) to there own row
+        for (idx = 1; idx <= tableHeader.length/2; idx+=2) {
+            var table = $($(tableHeader)[idx]).parents('td:first');
+            // make a new row in table
+            table.parents('tr:first').after('<tr id=moved_table'+idx.toString()+'></tr>');
+            // add right side table to row
+            jQuery(table).detach().appendTo('#moved_table'+idx.toString());
+        }
+
+        // format each table
+        for (idx = 0; idx < tableHeader.length; idx++) {
+            console.log($($(tableHeader)[idx]).parents('table:first').attr('id'))
+            if ($($(tableHeader)[idx]).parents('table:first').attr('id') == 'xstandTbl_div0') { 
+                break; 
+            }
+            else {
+                reformatTableHeader($(tableHeader)[idx]);
+                updateRows($($(tableHeader)[idx]).nextAll().slice(1));  // we want to skip over the subheader and update all the rows after that
+            }
+        }
     }
 
 
