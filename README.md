@@ -5,6 +5,8 @@ How Do I Get it?
 ------
 Download from the Chrome Web Store at:
 
+https://chrome.google.com/webstore/detail/hybrid-fantasy-football-s/defieefkkhbdajheandkjdenpjolcpgd
+
 What is this?
 ------
 This extension provides users with the ability to see the standings of their league on ESPN if they were to use a hybrid scoring system. 
