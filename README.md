@@ -22,7 +22,10 @@ Future Ideas
 ------
 * Make columns sortable
 * Add record to all pages that display it (not just the Standings page)
+* Show projected playoff bracket
 * Yahoo compatible
+* Update info that relies on scoring such as win streak
+
 
 Known Issues
 ------
