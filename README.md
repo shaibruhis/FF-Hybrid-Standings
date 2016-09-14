@@ -25,10 +25,14 @@ Future Ideas
 
 Known Issues
 ------
-* GB doesn't update for divisions
+* If there is a more than 2-way tie for the 6th highest points
 
 Update Log
 ------
+* v 0.1.4 (9/14/16)
+  * changed name from Hybrid Fantasy Football Standings to Fantasy Football Hybrid Standings
+* v0.1.3 (9/13/16)
+  * GB works for multiple divisions
 * v0.1 (9/13/16)
   * Initial release
  
