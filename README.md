@@ -22,6 +22,7 @@ Future Ideas
 ------
 * Make columns sortable
 * Add record to all pages that display it (not just the Standings page)
+* Yahoo compatible
 
 Known Issues
 ------
