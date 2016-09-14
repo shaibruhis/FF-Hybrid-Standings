@@ -222,7 +222,6 @@ $(document).ready(function() {
 
         // format each table
         for (idx = 0; idx < tableHeader.length; idx++) {
-            console.log($($(tableHeader)[idx]).parents('table:first').attr('id'))
             if ($($(tableHeader)[idx]).parents('table:first').attr('id') == 'xstandTbl_div0') { 
                 break; 
             }
@@ -294,8 +293,7 @@ $(document).ready(function() {
         return parseFloat($(columns[1]).text()) + (parseFloat($(columns[3]).text())*0.5);    // W + T
     }
 
-    function addGBInfo() {
-        var rows = $($(TABLE_HEADER)[0]).nextAll().slice(1);
+    function addGBInfo(rows) {
         var leaderWins = getWins(rows, 0);
         for (var idx = 1; idx < rows.length; idx++) {
             var itrWins = getWins(rows, idx);
@@ -318,7 +316,7 @@ $(document).ready(function() {
                 if(count > numOfWeeks - 1) {    // make sure all async calls completed
                     completionHandler(rows, pointsResults);
                     sortRows(rows);
-                    addGBInfo();
+                    addGBInfo(rows);
                 }
             });
         }
