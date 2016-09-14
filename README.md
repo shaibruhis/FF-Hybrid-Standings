@@ -20,7 +20,8 @@ Hybrid scoring is a combination of H2H and points based scoring that eliminates 
 
 Future Ideas
 ------
-* Add record to all pages that display it (not just the Standings page).
+* Make columns sortable
+* Add record to all pages that display it (not just the Standings page)
 
 Known Issues
 ------
