@@ -9,10 +9,9 @@ function getSeasonID() {
     if (matches) {
         seasonID = matches[1];
     }
-    else if ($('.games-alert-mod').find('b').text()) {  // some pages dont have seasonId in the URL so I check if there is the ESPN warning that I am looking at an old league
+    else if ($('.games-alert-mod').children('b').text().match(/\d{4}/)) {  // some pages dont have seasonId in the URL so I check if there is the ESPN warning that I am looking at an old league
         seasonID = $('.games-alert-mod').children('b').text();
     }
-    console.log($('.games-alert-mod').children('b').text(), seasonID);
     return seasonID;
 }
 
@@ -94,7 +93,6 @@ function getNumOfWeeksOnStandingsPage(results) {
 function getH2HResultsOnScoreboardPage(idx) {
     var results = $($('span.record')[idx]).text();
     results = results.replace(/[\(\)]+/g, '').split('-');   // remove '(' and ')'. g means globally which replaces all occurances, not just first one
-    console.log(results);
     return results;
 }
 
@@ -113,10 +111,10 @@ function getH2HResultsOnStandingsPage(row) {
 
 function getTotalResults(H2HResults, pointsResults) {
     returnArray = [3];
+    console.log(H2HResults, pointsResults);
     for (var idx = 0; idx < H2HResults.length; idx++) {
         returnArray[idx] = H2HResults[idx] + pointsResults[idx];
     }
-    console.log(H2HResults, pointsResults);
     return returnArray;
 }
 
@@ -319,10 +317,12 @@ function getPointsResults(numOfWeeks, rows, completionHandler) {
     var pointsResults = {};     // {'owner1':[W,L,T], 'owner2':[W,L,T], etc}
     var count = 0;
     for (var weekNum = 1; weekNum <= numOfWeeks; weekNum++) {
+        console.log(SCOREBOARD_URL+weekNum);
         $.get(SCOREBOARD_URL+weekNum, function(data) {
             pointsResults = parseHTML(data, pointsResults);
             count++;
             if(count > numOfWeeks - 1) {    // make sure all async calls completed
+                console.log(pointsResults);
                 completionHandler(rows, pointsResults);
 
             }
@@ -332,7 +332,6 @@ function getPointsResults(numOfWeeks, rows, completionHandler) {
 
 // MAIN
 if (ON_STANDINGS_PAGE) {
-    console.log('standings');
     addHybridDataToTable();
 }
 else if (ON_SCOREBOARD_PAGE) {
