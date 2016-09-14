@@ -11,7 +11,14 @@
 
   "content_scripts": [
     {
-      "matches": ["http://games.espn.com/ffl/standings?*"],
+      "matches": [
+        "http://games.espn.com/ffl/standings?*",
+        "http://games.espn.com/ffl/scoreboard?*",
+        "http://games.espn.com/ffl/leagueoffice?*",
+        "http://games.espn.com/ffl/clubhouse?*",
+        "http://games.espn.com/ffl/schedule?*",
+        "http://games.espn.com/ffl/boxscore*"
+      ],
   
       "js": ["jquery-3.1.0.min.js", "content_script.js"],
       "run_at": "document_end"
