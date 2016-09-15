@@ -16,40 +16,25 @@ function getSeasonID() {
 }
 
 const TABLE_HEADER = '.tableHead';
-const OWNER_COLUMN_WIDTH = 22;
-const NUMBER_OF_COLUMNS = 12;
-const NUMBER_OF_EXISTING_COLUMNS = 6;
-const COLUMN_WIDTH = ((100-OWNER_COLUMN_WIDTH)/NUMBER_OF_COLUMNS).toString() + '%';
-const COLUMN_HEADERS = ['TEAM', 'TOTAL W', 'TOTAL L', 'TOTAL T', 'H2H W', 'H2H L', 'H2H T', 'POINTS W', 'POINTS L', 'POINTS T', 'PCT', 'GB'];
 const LEAGUE_ID = getLeagueID();
 const SEASON_ID = getSeasonID();
 const SCOREBOARD_URL = 'http://games.espn.com/ffl/scoreboard?leagueId='+LEAGUE_ID+'&seasonId='+SEASON_ID+'&matchupPeriodId=';
-const LIGHT_BG_COLOR = '#f8f8f2';
-const DARK_BG_COLOR = '#f2f2e8';
-const ON_STANDINGS_PAGE = document.URL.match(/ffl\/standings/);
-const ON_SCOREBOARD_PAGE = document.URL.match(/ffl\/scoreboard/);
+const STANDINGS_URL = 'http://games.espn.com/ffl/standings?leagueId='+LEAGUE_ID+'&seasonId='+SEASON_ID;
 
 
 
 
-
-
-
-
-
-
-function getWins(records, idx) {
-    var owner = Object.keys(records[idx])[0];
-    return records[idx][owner]['Total W'] + (records[idx][owner]['Total T'] * 0.5);    // W + T
+function getWins(records, owner) {
+    return records[owner]['TOTAL W'] + (records[owner]['TOTAL T'] * 0.5);    // W + T
 }
 
-function addGBInfo(records) {
-    var leaderWins = getWins(records, 0);
-    for (var teamIdx = 1; teamIdx < records.length; teamIdx++) {
-        var itrWins = getWins(records, teamIdx);
-        var diff = leaderWins - itrWins;
+function addGBInfo(records, sortedOwners) {
+    var leaderWins = getWins(records, sortedOwners[0]);
+    for (var ownerIdx = 1; ownerIdx < sortedOwners.length; ownerIdx++) {
+        var ownerWins = getWins(records, sortedOwners[ownerIdx]);
+        var diff = leaderWins - ownerWins;
         if (diff) { // if 0 then leave as default
-            records[teamIdx][Object.keys(records[teamIdx])[0]]['gb'] = diff;
+            records[sortedOwners[ownerIdx]]['GB'] = diff;
         }
     }
     return records;
@@ -60,23 +45,23 @@ function addGBInfo(records) {
 var firstBy=function(){function n(n){return n}function t(n){return"string"==typeof n?n.toLowerCase():n}function r(r,e){if(e="number"==typeof e?{direction:e}:e||{},"function"!=typeof r){var u=r;r=function(n){return n[u]?n[u]:""}}if(1===r.length){var i=r,o=e.ignoreCase?t:n;r=function(n,t){return o(i(n))<o(i(t))?-1:o(i(n))>o(i(t))?1:0}}return-1===e.direction?function(n,t){return-r(n,t)}:r}function e(n,t){return n=r(n,t),n.thenBy=u,n}function u(n,t){var u=this;return n=r(n,t),e(function(t,r){return u(t,r)||n(t,r)})}return e}();
 
 function sortRecords(records) {
-    var sortedRecords = records.sort(
-        firstBy(function(a,b) { return a[Object.keys(a)[0]]['Total W'] - b[Object.keys(b)[0]]['Total W']; }, -1) // TOTAL W
-        .thenBy(function(a,b) { return a[Object.keys(a)[0]]['H2H W'] - b[Object.keys(b)[0]]['H2H W']; }, -1)  // H2H W
-        .thenBy(function(a,b) { return a[Object.keys(a)[0]]['Points W'] - b[Object.keys(b)[0]]['Points W']; }, -1)  // POINTS W
-        .thenBy(function(a,b) { return a[Object.keys(a)[0]]['pf'] - b[Object.keys(b)[0]]['pf']; }, -1) // PF
+    var sortedOwners = Object.keys(records).sort(
+        firstBy(function(a,b) { return records[a]['TOTAL W'] - records[b]['TOTAL W']; }, -1) // TOTAL W
+        .thenBy(function(a,b) { return records[a]['H2H W'] - records[b]['H2H W']; }, -1)  // H2H W
+        .thenBy(function(a,b) { return records[a]['POINTS W'] - records[b]['POINTS W']; }, -1)  // POINTS W
+        .thenBy(function(a,b) { return records[a]['PF'] - records[b]['PF']; }, -1) // PF
     );
-    return sortedRecords;
+    return sortedOwners;
 }
 
 function addPFToRecord(record, teamIdx) {
     var pointsFor = $('.sortablePF');
-    record[Object.keys(record)[0]]['pf'] = parseFloat($(pointsFor[teamIdx]).text());    // want to add pf inside the obj inside record
+    record['PF'] = parseFloat($(pointsFor[teamIdx]).text());    // want to add pf inside the obj inside record
     return record;
 }
 
 function getPercentage(results, numOfWeeks) {
-    return (results['Total W']+(results['Total T']*0.5))/(2*numOfWeeks); // calc % for results
+    return (results['TOTAL W']+(results['TOTAL T']*0.5))/(2*numOfWeeks); // calc % for results
 }
 
 function getTotalResults(H2HResults, pointsResults) {
@@ -84,35 +69,37 @@ function getTotalResults(H2HResults, pointsResults) {
     returnObj['H2H W'] = H2HResults[0];
     returnObj['H2H L'] = H2HResults[1];
     returnObj['H2H T'] = H2HResults[2];
-    returnObj['Points W'] = pointsResults[0];
-    returnObj['Points L'] = pointsResults[1];
-    returnObj['Points T'] = pointsResults[2];
-    returnObj['Total W'] = returnObj['H2H W'] + returnObj['Points W'];
-    returnObj['Total L'] = returnObj['H2H L'] + returnObj['Points L'];
-    returnObj['Total T'] = returnObj['H2H T'] + returnObj['Points T'];
+    returnObj['POINTS W'] = pointsResults[0];
+    returnObj['POINTS L'] = pointsResults[1];
+    returnObj['POINTS T'] = pointsResults[2];
+    returnObj['TOTAL W'] = returnObj['H2H W'] + returnObj['POINTS W'];
+    returnObj['TOTAL L'] = returnObj['H2H L'] + returnObj['POINTS L'];
+    returnObj['TOTAL T'] = returnObj['H2H T'] + returnObj['POINTS T'];
     return returnObj
 }
 
 function getDataFromRow(row, numOfWeeks, pointsResults) {
 
-    owner = $(row).first().children().first().attr('title');
+    var owner = $(row).first().children().first().attr('title');
+    var teamLink = $(row).first().children().first().attr('href');
     // get and build results
     var H2HResults = getH2HResults($(row)); // H2H W | H2H L | H2H T
     pointsResults = pointsResults[owner]; // Points W | Points L | Points T
     var results = getTotalResults(H2HResults, pointsResults);
-    results['pct'] = getPercentage(results, numOfWeeks);   // add % to results array
-    results['gb'] = 0;
-
+    results['PCT'] = getPercentage(results, numOfWeeks);   // add % to results array
+    results['GB'] = 0;
+    results['teamLink'] = teamLink;
     var obj = {}
-    obj[owner] = results;
+    obj['owner'] = owner;
+    obj['results'] = results;
     return obj;
 }
 
-function parseHTML(HTML, pointsResults) {
+function parseHTML(html, pointsResults) {
     var scoreObjects = {};      // {100: [owner1], 98.7: [owner2,owner3], etc}
     var allOwners = [];
     // populate scoresObject
-    var scoresArray = $(HTML).find('[id^=teamscrg_]');
+    var scoresArray = $(html).find('[id^=teamscrg_]');
     for (var idx = 0; idx < scoresArray.length; idx++) {
         var owner = $(scoresArray[idx]).find('a').attr('title');
         allOwners.push(owner);     // build array of allOwners
@@ -189,44 +176,42 @@ function getDataFromRows(rows) {
     getPointsResults(numOfWeeks, rows, function(rows, pointsResults) {
         var recordsToStore = {}
         recordsToStore['numOfWeeks'] = numOfWeeks;
-        var records = []
+        var records = {}
         for (var teamIdx = 0; teamIdx < rows.length; teamIdx++) {
-            var record = getDataFromRow($(rows[teamIdx]).children(), numOfWeeks, pointsResults);
-            record = addPFToRecord(record, teamIdx);
-            records.push(record);
+            var ownerRecordObj = getDataFromRow($(rows[teamIdx]).children(), numOfWeeks, pointsResults);
+            ownerRecordObj['results'] = addPFToRecord(ownerRecordObj['results'], teamIdx);
+            records[ownerRecordObj['owner']] = ownerRecordObj['results'];
         }
-        records = sortRecords(records);
-        records = addGBInfo(records);
 
+        var sortedOwners = sortRecords(records);
+        records = addGBInfo(records, sortedOwners);
+        recordsToStore['records'] = records;
+        recordsToStore['sortedOwners'] = sortedOwners;
         // store data
-        chrome.storage.local.set({records}, function() {
+        chrome.storage.local.set(recordsToStore
+            , function() {
             chrome.storage.local.get(function(object) {
                 console.log(object);
             });
-        });
+        }
+        );
     });
 }
 
 function getData() {
-    // get all tables
-    var tableHeader = $(TABLE_HEADER);
+    $.get(STANDINGS_URL, function(data) {
+        // get all tables
+        var tableHeader = $(data).find(TABLE_HEADER);
 
-    // format each table
-    var idx = 0;
-    while ($($(tableHeader)[idx]).parents('table:first').attr('id') != 'xstandTbl_div0') {
-        getDataFromRows($($(tableHeader)[idx]).nextAll().slice(1));  // get all rows contains owner records
-        idx++;
-    }
-
+        // format each table
+        var idx = 0;
+        while ($($(tableHeader)[idx]).parents('table:first').attr('id') != 'xstandTbl_div0') {
+            getDataFromRows($($(tableHeader)[idx]).nextAll().slice(1));  // get all rows contains owner records
+            idx++;
+        }
+    });
 }
 
 
-
-
+// MAIN
 getData();
-
-
-
-
-
-

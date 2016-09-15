@@ -14,13 +14,14 @@
   },
 
   "permissions": [
-    "tabs"
+    "tabs",
+    "storage"
   ],
 
   "content_scripts": [
     {
       "matches": ["http://games.espn.com/ffl/standings?*"],
-      "js": ["jquery-3.1.0.min.js", "content_scripts/content_script_standings.js"],
+      "js": ["jquery-3.1.0.min.js",  "content_scripts/content_script_getdata.js"],
       "run_at": "document_end"
     },
     {
@@ -30,7 +31,7 @@
     },
     {
       "matches": ["http://games.espn.com/ffl/leagueoffice?*"],
-      "js": ["jquery-3.1.0.min.js", "content_scripts/content_script_leagueoffice.js"],
+      "js": ["jquery-3.1.0.min.js", "content_scripts/content_script_getdata.js", "content_scripts/content_script_leagueoffice.js"],
       "run_at": "document_end"
     },
     {
@@ -47,7 +48,7 @@
       "matches": ["http://games.espn.com/ffl/boxscore*"],
       "js": ["jquery-3.1.0.min.js", "content_scripts/content_script_boxscore.js"],
       "run_at": "document_end"
-    },
+    }
 
   ],
   "incognito": "not_allowed",
