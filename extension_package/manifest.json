@@ -8,21 +8,47 @@
   "icons": {  
               "128": "assets/icon128.png" },
 
+  "background": { 
+    "scripts": [ "background.js" ], 
+    "persistent": false
+  },
+
+  "permissions": [
+    "tabs"
+  ],
 
   "content_scripts": [
     {
-      "matches": [
-        "http://games.espn.com/ffl/standings?*",
-        "http://games.espn.com/ffl/scoreboard?*",
-        "http://games.espn.com/ffl/leagueoffice?*",
-        "http://games.espn.com/ffl/clubhouse?*",
-        "http://games.espn.com/ffl/schedule?*",
-        "http://games.espn.com/ffl/boxscore*"
-      ],
-  
-      "js": ["jquery-3.1.0.min.js", "content_script.js"],
+      "matches": ["http://games.espn.com/ffl/standings?*"],
+      "js": ["jquery-3.1.0.min.js", "content_scripts/content_script_standings.js"],
       "run_at": "document_end"
-    }
+    },
+    {
+      "matches": ["http://games.espn.com/ffl/scoreboard?*"],
+      "js": ["jquery-3.1.0.min.js", "content_scripts/content_script_scoreboard.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["http://games.espn.com/ffl/leagueoffice?*"],
+      "js": ["jquery-3.1.0.min.js", "content_scripts/content_script_leagueoffice.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["http://games.espn.com/ffl/clubhouse?*"],
+      "js": ["jquery-3.1.0.min.js", "content_scripts/content_script_clubhouse.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["http://games.espn.com/ffl/schedule?*"],
+      "js": ["jquery-3.1.0.min.js", "content_scripts/content_script_schedule.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["http://games.espn.com/ffl/boxscore*"],
+      "js": ["jquery-3.1.0.min.js", "content_scripts/content_script_boxscore.js"],
+      "run_at": "document_end"
+    },
+
   ],
   "incognito": "not_allowed",
   "short_name": "FF Hybrid Standings"
