@@ -81,6 +81,7 @@ function getTotalResults(H2HResults, pointsResults) {
 function getDataFromRow(row, numOfWeeks, pointsResults) {
 
     var owner = $(row).first().children().first().attr('title');
+    var teamName = $(row).first().children().first().text();
     var teamLink = $(row).first().children().first().attr('href');
     // get and build results
     var H2HResults = getH2HResults($(row)); // H2H W | H2H L | H2H T
@@ -88,6 +89,7 @@ function getDataFromRow(row, numOfWeeks, pointsResults) {
     var results = getTotalResults(H2HResults, pointsResults);
     results['PCT'] = getPercentage(results, numOfWeeks);   // add % to results array
     results['GB'] = 0;
+    results['teamName'] = teamName;
     results['teamLink'] = teamLink;
     var obj = {}
     obj['owner'] = owner;
