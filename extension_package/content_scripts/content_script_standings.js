@@ -48,6 +48,10 @@ function updateRow(row, owner, record) {
     // edit cells to show results
     row = $(row).parent().children();   //TODO: replace this with an update function
     editCells($(row), owner, record);
+    // make owner's row bolded
+    if ($('.nav-main-breadcrumbs').children().last().attr('title') == owner) {
+        $(row).attr('style', 'font-weight:bold;');
+    }
 }
 
 function updateRows(rows, recordsObj) {
