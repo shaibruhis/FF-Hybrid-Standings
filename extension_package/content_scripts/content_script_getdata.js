@@ -22,7 +22,17 @@ const SCOREBOARD_URL = 'http://games.espn.com/ffl/scoreboard?leagueId='+LEAGUE_I
 const STANDINGS_URL = 'http://games.espn.com/ffl/standings?leagueId='+LEAGUE_ID+'&seasonId='+SEASON_ID;
 
 
-
+function addRank(records, sortedOwners) {
+    for (var owner in records) {
+        var ownerRank = sortedOwners.indexOf(owner)+1;  // 1st place is 0 index
+        if (ownerRank == 1) { ownerRank = ownerRank+'st'; }
+        else if (ownerRank == 2) { ownerRank = ownerRank+'nd'; }
+        else if (ownerRank == 3) { ownerRank = ownerRank+'rd'; }
+        else { ownerRank = ownerRank+'th'; }
+        records[owner]['ownerRank'] = ownerRank;
+    }
+    return records;
+}
 
 function getWins(records, owner) {
     return records[owner]['TOTAL W'] + (records[owner]['TOTAL T'] * 0.5);    // W + T
@@ -54,8 +64,8 @@ function sortRecords(records) {
     return sortedOwners;
 }
 
-function addPFToRecord(record, teamIdx) {
-    var pointsFor = $('.sortablePF');
+function addPFToRecord(html ,record, teamIdx) {
+    var pointsFor = $(html).find('.sortablePF');
     record['PF'] = parseFloat($(pointsFor[teamIdx]).text());    // want to add pf inside the obj inside record
     return record;
 }
@@ -172,7 +182,7 @@ function getH2HResults(row) {
     return $.map(results, function(elem) { return parseInt($(elem).text(),10); });
 }
 
-function getDataFromRows(rows) {
+function getDataFromRows(rows, html) {
     var H2HResults = getH2HResults($(rows[0]).children());
     var numOfWeeks = getNumOfWeeks(H2HResults); // wins + losses + ties
     getPointsResults(numOfWeeks, rows, function(rows, pointsResults) {
@@ -181,12 +191,14 @@ function getDataFromRows(rows) {
         var records = {}
         for (var teamIdx = 0; teamIdx < rows.length; teamIdx++) {
             var ownerRecordObj = getDataFromRow($(rows[teamIdx]).children(), numOfWeeks, pointsResults);
-            ownerRecordObj['results'] = addPFToRecord(ownerRecordObj['results'], teamIdx);
+            ownerRecordObj['results'] = addPFToRecord(html, ownerRecordObj['results'], teamIdx);
             records[ownerRecordObj['owner']] = ownerRecordObj['results'];
         }
 
         var sortedOwners = sortRecords(records);
         records = addGBInfo(records, sortedOwners);
+        records = addRank(records, sortedOwners);
+        console.log(records);
         recordsToStore['records'] = records;
         recordsToStore['sortedOwners'] = sortedOwners;
         // store data
@@ -201,14 +213,14 @@ function getDataFromRows(rows) {
 }
 
 function getData() {
-    $.get(STANDINGS_URL, function(data) {
+    $.get(STANDINGS_URL, function(html) {
         // get all tables
-        var tableHeader = $(data).find(TABLE_HEADER);
+        var tableHeader = $(html).find(TABLE_HEADER);
 
         // format each table
         var idx = 0;
         while ($($(tableHeader)[idx]).parents('table:first').attr('id') != 'xstandTbl_div0') {
-            getDataFromRows($($(tableHeader)[idx]).nextAll().slice(1));  // get all rows contains owner records
+            getDataFromRows($($(tableHeader)[idx]).nextAll().slice(1), html);  // get all rows contains owner records
             idx++;
         }
     });

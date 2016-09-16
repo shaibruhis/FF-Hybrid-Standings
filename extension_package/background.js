@@ -23,8 +23,6 @@ chrome.runtime.onStartup.addListener(function() {
 //     }
 // });
 
-// store numOfWeeks
-
 
 // structure of object in storage
 // {
@@ -34,18 +32,19 @@ chrome.runtime.onStartup.addListener(function() {
 //             'ownerName':'bob',
 //             'teamName': 'bobs team',
 //             'teamLink': www.bob.com,
-//             'Total W':8,
-//             'Total L':2,
-//             'Total T':0,
+//             'teamRank': '1st'
+//             'TOTAL W':8,
+//             'TOTAL L':2,
+//             'TOTAL T':0,
 //             'H2H W':5,
 //             'H2H L':0,
 //             'H2H T':0,
-//             'Points W':3,
-//             'Points L':2,
-//             'Points T':0,
-//             'pct':.800,
-//             'gb':'--'
-//             'pf': 671.1
+//             'POINTS W':3,
+//             'POINTS L':2,
+//             'POINTS T':0,
+//             'PCT':.800,
+//             'GB':'--'
+//             'PF': 671.1
 //         },
 //         owner2 - owner12
 //     },
