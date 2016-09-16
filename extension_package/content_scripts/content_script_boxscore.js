@@ -15,7 +15,6 @@ chrome.storage.local.get(function(recordsObj) {
         var record = recordsObj['records'][owner];
         var totalResults = ' '+record['TOTAL W']+'-'+record['TOTAL L']+'-'+record['TOTAL T']+'\u00A0\u00A0\u00A0\u00A0';
 
-        console.log(recordsObj, record['teamRank']);
         $(teamName).parent().parent()[0].childNodes[7].nodeValue = totalResults
         $(teamName).parent().parent()[0].childNodes[12].nodeValue = ' '+record['teamRank'];
     }
