@@ -24,12 +24,12 @@ const STANDINGS_URL = 'http://games.espn.com/ffl/standings?leagueId='+LEAGUE_ID+
 
 function addRank(records, sortedOwners) {
     for (var owner in records) {
-        var ownerRank = sortedOwners.indexOf(owner)+1;  // 1st place is 0 index
-        if (ownerRank == 1) { ownerRank = ownerRank+'st'; }
-        else if (ownerRank == 2) { ownerRank = ownerRank+'nd'; }
-        else if (ownerRank == 3) { ownerRank = ownerRank+'rd'; }
-        else { ownerRank = ownerRank+'th'; }
-        records[owner]['ownerRank'] = ownerRank;
+        var teamRank = sortedOwners.indexOf(owner)+1;  // 1st place is 0 index
+        if (teamRank == 1) { teamRank = teamRank+'st'; }
+        else if (teamRank == 2) { teamRank = teamRank+'nd'; }
+        else if (teamRank == 3) { teamRank = teamRank+'rd'; }
+        else { teamRank = teamRank+'th'; }
+        records[owner]['teamRank'] = teamRank;
     }
     return records;
 }
