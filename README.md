@@ -21,7 +21,6 @@ Hybrid scoring is a combination of H2H and points based scoring that eliminates 
 Future Ideas
 ------
 * Make columns sortable
-* Add record to all pages that display it (not just the Standings page)
 * Yahoo compatible
 
 Known Issues
@@ -30,6 +29,8 @@ Known Issues
 
 Update Log
 ------
+* v 0.2.0 (9/16/16)
+  * hybrid record appears on all ESPN pages that display record (not just Standings page)
 * v 0.1.4 (9/14/16)
   * changed name from Hybrid Fantasy Football Standings to Fantasy Football Hybrid Standings
 * v0.1.3 (9/13/16)
@@ -39,4 +40,4 @@ Update Log
  
 Thanks
 ------
-* Brett Woodward's [FantasyPlus](https://github.com/flipperbw/FantasyPlus) and Thomas Beutler's [FantasyTargets](https://github.com/tcbeutler/FantasyTargets) for providing me with inspiration to build this and give back to the Fantasy community
+* Thanks to Brett Woodward's [FantasyPlus](https://github.com/flipperbw/FantasyPlus) and Thomas Beutler's [FantasyTargets](https://github.com/tcbeutler/FantasyTargets) for providing me with inspiration to build this and give back to the Fantasy community.
