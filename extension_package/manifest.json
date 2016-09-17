@@ -2,26 +2,19 @@
   "manifest_version": 2,
 
   "name": "Fantasy Football Hybrid Standings",
-  "version": "0.1.4",
+  "version": "0.2.2",
 
   "description": "Adds ability to see a hybrid standings (H2H winner and highest points) scoring system on the ESPN Standings page.",
   "icons": {  
               "128": "assets/icon128.png" },
 
-  "background": { 
-    "scripts": [ "background.js" ], 
-    "persistent": false
-  },
-
   "permissions": [
-    "tabs",
-    "storage",
-    "http://games.espn.com/"
+ 
   ],
 
   "content_scripts": [
     {
-      "matches": ["http://games.espn.com/*"],
+      "matches": ["http://games.espn.com/ffl/*"],
       "js": ["jquery-3.1.0.min.js", "content_script.js"],
       "run_at": "document_idle"
     }
