@@ -9,13 +9,17 @@
               "128": "assets/icon128.png" },
 
   "permissions": [
- 
   ],
 
   "content_scripts": [
     {
       "matches": ["http://games.espn.com/ffl/*"],
-      "js": ["jquery-3.1.0.min.js", "content_script.js"],
+      "js": ["jquery-3.1.0.min.js", "content_script_espn.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["http://games.espn.com/ffl/*"],
+      "js": ["jquery-3.1.0.min.js", "content_script_yahoo.js"],
       "run_at": "document_idle"
     }
   ],
