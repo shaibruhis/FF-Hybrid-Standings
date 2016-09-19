@@ -18,9 +18,9 @@
       "run_at": "document_idle"
     },
     {
-      "matches": ["http://games.espn.com/ffl/*"],
+      "matches": ["http://football.fantasysports.yahoo.com/f1/*"],
       "js": ["jquery-3.1.0.min.js", "content_script_yahoo.js"],
-      "run_at": "document_idle"
+      "run_at": "document_load"
     }
   ],
   "incognito": "not_allowed",

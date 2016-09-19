@@ -1,25 +1,19 @@
-function getLeagueID() {
-    var matches = document.URL.match(/leagueId=(\d+)/);
-    return matches[1];
-}
+// get info from League > record book
+// Football '16
+// League > Overview
+// My Team > !Team Info
+// Matchups
 
-function getSeasonID() {
-    var seasonID = "2016";
-    var matches = document.URL.match(/seasonId=(\d+)/);
-    if (matches) {
-        seasonID = matches[1];
-    }
-    else if ($('.games-alert-mod').children('b').text().match(/\d{4}/)) {  // some pages dont have seasonId in the URL so I check if there is the ESPN warning that I am looking at an old league
-        seasonID = $('.games-alert-mod').children('b').text();
-    }
-    return seasonID;
+
+function getLeagueID() {
+    var matches = document.URL.match(/f1\/(\d)+(\/)?/)[0].split('/');
+    return matches[1];
 }
 
 const TABLE_HEADER = '.tableHead';
 const LEAGUE_ID = getLeagueID();
-const SEASON_ID = getSeasonID();
-const SCOREBOARD_URL = 'http://games.espn.com/ffl/scoreboard?leagueId='+LEAGUE_ID+'&seasonId='+SEASON_ID+'&matchupPeriodId=';
-const STANDINGS_URL = 'http://games.espn.com/ffl/standings?leagueId='+LEAGUE_ID+'&seasonId='+SEASON_ID;
+const SCOREBOARD_URL = 'http://football.fantasysports.yahoo.com/f1/'+LEAGUE_ID+'/matchup?week=';
+const STANDINGS_URL = 'http://football.fantasysports.yahoo.com/f1/'+LEAGUE_ID;
 
 
 function addRank(records, sortedOwners) {
@@ -89,10 +83,7 @@ function getTotalResults(H2HResults, pointsResults) {
 }
 
 function getDataFromRow(row, numOfWeeks, pointsResults) {
-
-    var owner = $(row).first().children().first().attr('title');
-    var teamName = $(row).first().children().first().text();
-    var teamLink = $(row).first().children().first().attr('href');
+    var owner = $(row).find('Mawpx-250').text();
     // get and build results
     var H2HResults = getH2HResults($(row)); // H2H W | H2H L | H2H T
     pointsResults = pointsResults[owner]; // Points W | Points L | Points T
@@ -111,51 +102,54 @@ function parseHTML(html, pointsResults) {
     var scoreObjects = {};      // {100: [owner1], 98.7: [owner2,owner3], etc}
     var allOwners = [];
     // populate scoresObject
-    var scoresArray = $(html).find('[id^=teamscrg_]');
+    var scoresArray = $(html).find('.Fz-lg');
+    console.log(scoresArray);
     for (var idx = 0; idx < scoresArray.length; idx++) {
-        var owner = $(scoresArray[idx]).find('a').attr('title');
-        allOwners.push(owner);     // build array of allOwners
-        var score = $(scoresArray[idx]).find('.score').attr('title');
-        if (score in scoreObjects) {
-            scoreObjects[score].push(owner);
-        }
-        else {
-            scoreObjects[score] = [owner];   
-        }
+        var owner = $(scoresArray[idx]).parents('.Grid-u-1-4').first().next().find('a').first().text();
+        console.log(owner);
     }
+    //     allOwners.push(owner);     // build array of allOwners
+    //     var score = $(scoresArray[idx]).text();
+    //     if (score in scoreObjects) {
+    //         scoreObjects[score].push(owner);
+    //     }
+    //     else {
+    //         scoreObjects[score] = [owner];   
+    //     }
+    // }
 
-    // get keys and sort them so we can get high scores from dict
-    var scoreObjectsKeys = Object.keys(scoreObjects).sort(function(a, b) { return parseFloat(b)-parseFloat(a); } );
+    // // get keys and sort them so we can get high scores from dict
+    // var scoreObjectsKeys = Object.keys(scoreObjects).sort(function(a, b) { return parseFloat(b)-parseFloat(a); } );
 
-    // initialize pointsResults
-    if (jQuery.isEmptyObject(pointsResults)) {
-        for (var idx = 0; idx < allOwners.length; idx++) {
-            pointsResults[allOwners[idx]] = [0,0,0];
-        }
-    }
+    // // initialize pointsResults
+    // if (jQuery.isEmptyObject(pointsResults)) {
+    //     for (var idx = 0; idx < allOwners.length; idx++) {
+    //         pointsResults[allOwners[idx]] = [0,0,0];
+    //     }
+    // }
 
-    // adds results to pointresults
-    var count = 1
-    for (var scoreIdx = 0; scoreIdx < scoreObjectsKeys.length; scoreIdx++) {
-        var owners = scoreObjects[scoreObjectsKeys[scoreIdx]];
-        for (var ownerIdx = 0; ownerIdx < owners.length; ownerIdx++) {
-            if (count < allOwners.length/2) {
-                pointsResults[owners[ownerIdx]][0]++;  // increase owners wins by 1
-            }
-            else if (count == allOwners.length/2) {
-                if (owners.length == 1) {
-                    pointsResults[owners[ownerIdx]][0]++;  // increase owners wins by 1
-                }
-                else {
-                    pointsResults[owners[ownerIdx]][2]++;  // increase owners ties by 1
-                }
-            }
-            else {
-                pointsResults[owners[ownerIdx]][1]++;  // increase owners losses by 1
-            }
-        }
-        count += owners.length // increase the count by the number of people that had this score
-    }
+    // // adds results to pointresults
+    // var count = 1
+    // for (var scoreIdx = 0; scoreIdx < scoreObjectsKeys.length; scoreIdx++) {
+    //     var owners = scoreObjects[scoreObjectsKeys[scoreIdx]];
+    //     for (var ownerIdx = 0; ownerIdx < owners.length; ownerIdx++) {
+    //         if (count < allOwners.length/2) {
+    //             pointsResults[owners[ownerIdx]][0]++;  // increase owners wins by 1
+    //         }
+    //         else if (count == allOwners.length/2) {
+    //             if (owners.length == 1) {
+    //                 pointsResults[owners[ownerIdx]][0]++;  // increase owners wins by 1
+    //             }
+    //             else {
+    //                 pointsResults[owners[ownerIdx]][2]++;  // increase owners ties by 1
+    //             }
+    //         }
+    //         else {
+    //             pointsResults[owners[ownerIdx]][1]++;  // increase owners losses by 1
+    //         }
+    //     }
+    //     count += owners.length // increase the count by the number of people that had this score
+    // }
     return pointsResults;
 }
 
@@ -166,9 +160,9 @@ function getPointsResults(numOfWeeks, rows, completionHandler) {
         $.get(SCOREBOARD_URL+weekNum, function(data) {
             pointsResults = parseHTML(data, pointsResults);
             count++;
-            if(count > numOfWeeks - 1) {    // make sure all async calls completed
-                completionHandler(rows, pointsResults);
-            }
+            // if(count > numOfWeeks - 1) {    // make sure all async calls completed
+            //     completionHandler(rows, pointsResults);
+            // }
         });
     }
 }
@@ -178,56 +172,46 @@ function getNumOfWeeks(results) {
 }
 
 function getH2HResults(row) {
-    var results = $(row).slice(1,4);
-    return $.map(results, function(elem) { return parseInt($(elem).text(),10); });
+    var results = $(row).children('.Tst-wlt').text().split('-');
+    return $.map(results, function(elem) { return parseInt(results,10); });
 }
 
-function getDataFromRows(rows, tableIdx, html) {
-    var H2HResults = getH2HResults($(rows[0]).children());
+function getDataFromRows(rows) {
+    var H2HResults = getH2HResults(rows.first());
     var numOfWeeks = getNumOfWeeks(H2HResults); // wins + losses + ties
-    getPointsResults(numOfWeeks, rows, function(rows, pointsResults) {
+    console.log(numOfWeeks);
+    getPointsResults(1, rows, function(rows, pointsResults) {
         var recordsToStore = {}
         recordsToStore['numOfWeeks'] = numOfWeeks;
         var records = {}
         for (var teamIdx = 0; teamIdx < rows.length; teamIdx++) {
-            var ownerRecordObj = getDataFromRow($(rows[teamIdx]).children(), numOfWeeks, pointsResults);
-            ownerRecordObj['results'] = addPFToRecord(html, ownerRecordObj['results'], teamIdx);
-            records[ownerRecordObj['owner']] = ownerRecordObj['results'];
+            var ownerRecordObj = getDataFromRow($(rows[teamIdx]), numOfWeeks, pointsResults);
+            // ownerRecordObj['results'] = addPFToRecord(html, ownerRecordObj['results'], teamIdx);
+            // records[ownerRecordObj['owner']] = ownerRecordObj['results'];
         }
 
-        var sortedOwners = sortRecords(records);
-        records = addGBInfo(records, sortedOwners);
-        records = addRank(records, sortedOwners);
-        recordsToStore['records'] = records;
-        recordsToStore['sortedOwners'] = sortedOwners;
+        // var sortedOwners = sortRecords(records);
+        // records = addGBInfo(records, sortedOwners);
+        // records = addRank(records, sortedOwners);
+        // recordsToStore['records'] = records;
+        // recordsToStore['sortedOwners'] = sortedOwners;
         
-        // // store data
-        // chrome.storage.local.set(recordsToStore, function() {
-        //     chrome.storage.local.get(function(object) {
-        //         console.log(object);
-        //     });
-        // });
-        url = document.location.href;
-        if (/standings/.test(url)) { updateStandingsUI(recordsToStore, tableIdx); }
-        else if (/scoreboard/.test(url)) { updateScoreboardUI(recordsToStore); }
-        else if (/clubhouse/.test(url)) { updateClubhouseUI(recordsToStore); }
-        else if (/leagueoffice/.test(url)) { updateLeagueOfficeUI(recordsToStore); }
-        else if (/schedule/.test(url)) { updateScheduleUI(recordsToStore); }
-        else if (/boxscore/.test(url)) { updateBoxscoreUI(recordsToStore); }
+        // url = document.location.href;
+        // if (/standings/.test(url)) { updateStandingsUI(recordsToStore, tableIdx); }
+        // else if (/scoreboard/.test(url)) { updateScoreboardUI(recordsToStore); }
+        // else if (/clubhouse/.test(url)) { updateClubhouseUI(recordsToStore); }
+        // else if (/leagueoffice/.test(url)) { updateLeagueOfficeUI(recordsToStore); }
+        // else if (/schedule/.test(url)) { updateScheduleUI(recordsToStore); }
+        // else if (/boxscore/.test(url)) { updateBoxscoreUI(recordsToStore); }
     });
 }
 
 function getData() {
     $.get(STANDINGS_URL, function(html) {
         // get all tables
-        var tableHeader = $(html).find(TABLE_HEADER);
-        // console.log(tableHeader);
-        // format each table
-        var idx = 0;
-        while ($($(tableHeader)[idx]).parents('table:first').attr('id') != 'xstandTbl_div0' && idx <= tableHeader.length) {
-            getDataFromRows($($(tableHeader)[idx]).nextAll().slice(1), idx, html);  // get all rows contains owner records
-            idx++;
-        }
+        var table = $(html).find('#standingstable')[0];
+        // console.log($($(table).children('tbody')[0]).children());
+        getDataFromRows($($(table).children('tbody')[0]).children());  // get all rows contains owner records
     });
 }
 
@@ -326,7 +310,6 @@ function updateLeagueOfficeUI(recordsObj) {
 }
 
 function updateStandingsUI(recordsObj, tableIdx) {
-    // const TABLE_HEADER = '.tableHead';
     const OWNER_COLUMN_WIDTH = 22;
     const NUMBER_OF_COLUMNS = 12;
     const NUMBER_OF_EXISTING_COLUMNS = 6;
@@ -441,7 +424,21 @@ function updateStandingsUI(recordsObj, tableIdx) {
         // jQuery(tableHeader).detach().prependTo('thead');
     }
 
-    function addHybridDataToTable(recordsObj, tableIdx) {
+    function addHybridDataToTable(recordsObj) {
+        // what to turn table into
+        // <tr>
+        //     <th class="Ta-c Px-sm Tst-rank-th"><span>Rank</span></th>
+        //         <th class="Px-sm Tst-manager-th"><span>Team</span></th>
+        //         <th class="Ta-c Px-sm Tst-wlt-th"><div>TOTAL</div><div>W-L-T</div></th> 
+        //         <th class="Ta-c Px-sm Tst-wlt-th"><div>H2H</div><div>W-L-T</div></th>
+        //         <th class="Ta-c Px-sm Tst-wlt-th"><div>POINTS</div><div>W-L-T</div></th>
+        //         <th class="Ta-c Px-sm">Pts For</th>
+        //         <th class="Ta-c Px-sm">Pts Agnst</th>
+        //         <th class="Ta-c Px-sm">Streak</th>            
+        //         <th class="Ta-c Px-sm"><span>Waiver</span></th>
+        //         <th class="last Ta-c Px-sm">Moves</th>
+        // </tr>
+
         // get all tables
         var tableHeader = $(TABLE_HEADER);
 
@@ -455,10 +452,9 @@ function updateStandingsUI(recordsObj, tableIdx) {
         }
 
         // format table
-        reformatTableHeader($(tableHeader)[tableIdx]);
-        updateRows($($(tableHeader)[tableIdx]).nextAll().slice(1), recordsObj);  // we want to skip over the subheader and update all the rows after that
+        reformatTableHeader($(tableHeader));
+        updateRows($($(tableHeader)).nextAll().slice(1), recordsObj);  // we want to skip over the subheader and update all the rows after that
     }
 
-    // MAIN
-    addHybridDataToTable(recordsObj, tableIdx);
+    addHybridDataToTable(recordsObj);
 }
