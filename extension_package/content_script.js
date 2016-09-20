@@ -213,7 +213,7 @@ function getDataFromRows(rows, tableIdx, html) {
         else if (/clubhouse/.test(url)) { updateClubhouseUI(recordsToStore); }
         else if (/leagueoffice/.test(url)) { updateLeagueOfficeUI(recordsToStore); }
         else if (/schedule/.test(url)) { updateScheduleUI(recordsToStore); }
-        else if (/boxscore/.test(url)) { updateBoxscoreUI(recordsToStore); }
+        else if (/boxscore|matchuppreview/.test(url)) { updateBoxscoreUI(recordsToStore); }
     });
 }
 
@@ -249,8 +249,8 @@ function updateScoreboardUI(recordsObj) {
 
 function updateBoxscoreUI(recordsObj) {
     var ownersInMatchup = $('.teamInfoOwnerData');
-    for (var idx = 0; idx < ownersInMatchup.length; idx++) {
-        var teamName = $(ownersInMatchup[idx]);
+    for (var ownerIdx = 0; ownerIdx < ownersInMatchup.length; ownerIdx++) {
+        var teamName = $(ownersInMatchup[ownerIdx]);
 
         // need to get full team name (including owner) so it matches keys in recordsObj['records']
         var regex = new RegExp($(teamName).text());   
@@ -260,6 +260,7 @@ function updateBoxscoreUI(recordsObj) {
             if (owners[idx].match(regex)) { break; }
         }
         var owner = owners[idx];
+        console.log(owner);
 
         var record = recordsObj['records'][owner];
         var totalResults = ' '+record['TOTAL W']+'-'+record['TOTAL L']+'-'+record['TOTAL T']+'\u00A0\u00A0\u00A0\u00A0';
