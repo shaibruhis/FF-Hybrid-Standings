@@ -20,7 +20,7 @@
     {
       "matches": ["http://football.fantasysports.yahoo.com/f1/*"],
       "js": ["jquery-3.1.0.min.js", "content_script_yahoo.js"],
-      "run_at": "document_load"
+      "run_at": "document_idle"
     }
   ],
   "incognito": "not_allowed",
