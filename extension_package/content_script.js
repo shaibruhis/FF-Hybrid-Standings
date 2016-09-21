@@ -253,14 +253,12 @@ function updateBoxscoreUI(recordsObj) {
         var teamName = $(ownersInMatchup[ownerIdx]);
 
         // need to get full team name (including owner) so it matches keys in recordsObj['records']
-        var regex = new RegExp($(teamName).text());   
         var owners = recordsObj['sortedOwners'];
         var idx;
         for (idx = 0; idx < owners.length; idx++) {
-            if (owners[idx].match(regex)) { break; }
+            if (owners[idx].indexOf(teamName) != -1) { break; }
         }
         var owner = owners[idx];
-        console.log(owner);
 
         var record = recordsObj['records'][owner];
         var totalResults = ' '+record['TOTAL W']+'-'+record['TOTAL L']+'-'+record['TOTAL T']+'\u00A0\u00A0\u00A0\u00A0';
@@ -273,15 +271,13 @@ function updateBoxscoreUI(recordsObj) {
 function updateClubhouseUI(recordsObj) {
     var ownerRecord = $('h4')[0].childNodes[1]; // use childNodes to access immediate text only (no text in children)
     var ownerRank = $('h4 em');
-
     var teamName = $('.team-name').text();
     teamName = teamName.slice(0,teamName.indexOf('('));
-    var regex = new RegExp(teamName);
     
     var owners = recordsObj['sortedOwners'];
     var idx;
     for (idx = 0; idx < owners.length; idx++) {
-        if (owners[idx].match(regex)) { break; }
+        if (owners[idx].indexOf(teamName) != -1) { break; }
     }
 
     var owner = owners[idx];
