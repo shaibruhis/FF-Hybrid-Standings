@@ -249,20 +249,19 @@ function updateScoreboardUI(recordsObj) {
 
 function updateBoxscoreUI(recordsObj) {
     var ownersInMatchup = $('.teamInfoOwnerData');
+
     for (var ownerIdx = 0; ownerIdx < ownersInMatchup.length; ownerIdx++) {
         var teamName = $(ownersInMatchup[ownerIdx]);
-
         // need to get full team name (including owner) so it matches keys in recordsObj['records']
         var owners = recordsObj['sortedOwners'];
         var idx;
         for (idx = 0; idx < owners.length; idx++) {
-            if (owners[idx].indexOf(teamName) != -1) { break; }
+            if (owners[idx].indexOf(teamName.text()) != -1) { break; }
         }
         var owner = owners[idx];
 
         var record = recordsObj['records'][owner];
         var totalResults = ' '+record['TOTAL W']+'-'+record['TOTAL L']+'-'+record['TOTAL T']+'\u00A0\u00A0\u00A0\u00A0';
-
         $(teamName).parent().parent()[0].childNodes[7].nodeValue = totalResults
         $(teamName).parent().parent()[0].childNodes[12].nodeValue = ' '+record['teamRank'];
     }
