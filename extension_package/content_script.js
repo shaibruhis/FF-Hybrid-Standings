@@ -234,7 +234,7 @@ function getData() {
 
 // MAIN
 chrome.storage.sync.get('leagueIDs', function(leagueIDsObj) {
-    if (leagueIDsObj['leagueIDs']['espn'].indexOf(LEAGUE_ID) != -1) {
+    if (Object.keys(leagueIDsObj['leagueIDs']['espn']).indexOf(LEAGUE_ID) != -1) {
         getData();
     }
 });

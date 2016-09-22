@@ -1,16 +1,19 @@
 $(document).ready(function() {
 
+    const LEAGUE_URL = 'http://games.espn.com/ffl/leagueoffice?seasonId='+(new Date().getFullYear())+'&leagueId=';
+
+
     chrome.storage.sync.get('leagueIDs', function(leagueIDsObj) {
         var leagueIDs;
         console.log(jQuery.isEmptyObject(leagueIDsObj), leagueIDsObj);
         if (jQuery.isEmptyObject(leagueIDsObj)) { 
-            leagueIDs = {'espn':[]};    // add yahoo
+            leagueIDs = {'espn':{}};    // add yahoo
         }
         else {
             leagueIDs = leagueIDsObj.leagueIDs;
             for (var host in leagueIDs) { // do it for each host type (for now just espn, but yahoo later)
-                for (var idx = 0; idx < leagueIDs[host].length; idx++) {
-                    var listItem = makeListItem(leagueIDs[host][idx]);
+                for (var leagueID in leagueIDs[host]) {
+                    var listItem = makeListItem(leagueIDs[host][leagueID]);
                     // add to UI
                     $('#leagueIDs-list-wrapper').append(listItem);
                 }
@@ -18,11 +21,18 @@ $(document).ready(function() {
         }
 
         $('#add').click(function() {
-            var newListItem = makeListItem($('#textInput').val());
-            // add to UI
-            $('#leagueIDs-list-wrapper').append(newListItem);
-            // add to storageObj
-            leagueIDs.espn.push($(newListItem).find('.league_info').text());
+            var leagueID = $('#textInput').val();
+            if (Object.keys(leagueIDs['espn']).indexOf(leagueID) == -1) {
+                $.get(LEAGUE_URL+leagueID, function(html) {
+                    var leagueName = $(html).find('.league-team-names').children().first().text();
+                    var displayText = leagueName + ' (' + leagueID + ')'
+                    var newListItem = makeListItem(displayText);
+                    // add to UI
+                    $('#leagueIDs-list-wrapper').append(newListItem);
+                    // add to storageObj
+                    leagueIDs.espn[leagueID] = displayText;
+                });
+            }
         });
 
         $('#save').click(function() {
@@ -36,14 +46,14 @@ $(document).ready(function() {
             event.preventDefault();
             $(this).parent('.leagueIDs-list-item').remove();
             // remove from storageObj
-            var idx = leagueIDs.espn.indexOf($(this).prev().text());
-            leagueIDs.espn.splice(idx,1);
+            var leagueID = $(this).prev().text().match(/(\d+\))$/)[1].slice(0,-1);  // get leagueID from text
+            delete leagueIDs.espn[leagueID];
         }
 
-        function makeListItem(leagueID) {
+        function makeListItem(league) {
             var newListItem = $('<div class=leagueIDs-list-item></div>');
             var listItemText = $('<span class=league_info></span>');
-            $(listItemText).text(leagueID);
+            $(listItemText).text(league);
             $(newListItem).append(listItemText);
             var listItemButton = $('<button class=remove>Remove</button>');
             $(listItemButton).click(remove);
