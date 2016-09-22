@@ -9,8 +9,13 @@
               "128": "assets/icon128.png" },
 
   "permissions": [
- 
+    "storage"
   ],
+
+  "options_ui": {
+    "page": "options.html",
+    "chrome_style": true
+  },
 
   "content_scripts": [
     {
