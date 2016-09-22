@@ -233,7 +233,11 @@ function getData() {
 
 
 // MAIN
-getData();
+chrome.storage.sync.get('leagueIDs', function(leagueIDsObj) {
+    if (leagueIDsObj['leagueIDs']['espn'].indexOf(LEAGUE_ID) != -1) {
+        getData();
+    }
+});
 
 function updateScoreboardUI(recordsObj) {
     var teams = $('td.team');
