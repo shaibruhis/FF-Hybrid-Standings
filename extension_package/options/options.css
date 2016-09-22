@@ -1,0 +1,11 @@
+body { 
+    padding: 10px; 
+}
+
+.leagueIDs-list-item {
+    height: 35px;
+}
+
+.remove {
+    float: right;
+}

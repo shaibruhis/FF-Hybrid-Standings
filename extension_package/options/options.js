@@ -27,9 +27,7 @@ $(document).ready(function() {
 
         $('#save').click(function() {
             chrome.storage.sync.set({'leagueIDs':leagueIDs}, function() {
-                chrome.storage.sync.get('leagueIDs', function(leagueIDs) {
-                    console.log(leagueIDs);
-                });
+                window.close();
             });
         });
 
