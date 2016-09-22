@@ -5,7 +5,6 @@ $(document).ready(function() {
 
     chrome.storage.sync.get('leagueIDs', function(leagueIDsObj) {
         var leagueIDs;
-        console.log(jQuery.isEmptyObject(leagueIDsObj), leagueIDsObj);
         if (jQuery.isEmptyObject(leagueIDsObj)) { 
             leagueIDs = {'espn':{}};    // add yahoo
         }
@@ -41,6 +40,10 @@ $(document).ready(function() {
             });
         });
 
+        $('#cancel').click(function() {
+            window.close();
+        });
+
         function remove(event) {
             // remove from UI
             event.preventDefault();
@@ -52,7 +55,7 @@ $(document).ready(function() {
 
         function makeListItem(league) {
             var newListItem = $('<div class=leagueIDs-list-item></div>');
-            var listItemText = $('<span class=league_info></span>');
+            var listItemText = $('<span class=league-info></span>');
             $(listItemText).text(league);
             $(newListItem).append(listItemText);
             var listItemButton = $('<button class=remove>Remove</button>');

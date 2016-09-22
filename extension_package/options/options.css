@@ -2,6 +2,11 @@ body {
     padding: 10px; 
 }
 
+#input-wrapper,
+#leagueIDs-list-wrapper {
+    margin-bottom: 15px;
+}
+
 .leagueIDs-list-item {
     height: 35px;
 }
