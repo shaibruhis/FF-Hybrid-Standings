@@ -8,6 +8,11 @@
   "icons": {  
               "128": "assets/icon128.png" },
 
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+
   "permissions": [
     "storage"
   ],
