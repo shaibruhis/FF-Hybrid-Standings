@@ -214,6 +214,7 @@ function getDataFromRows(rows, tableIdx, html) {
         else if (/leagueoffice/.test(url)) { updateLeagueOfficeUI(recordsToStore); }
         else if (/schedule/.test(url)) { updateScheduleUI(recordsToStore); }
         else if (/boxscore|matchuppreview/.test(url)) { updateBoxscoreUI(recordsToStore); }
+        else if (/fantasycast/.test(url)) { updateFantasycastUI(recordsToStore); }
     });
 }
 
@@ -322,6 +323,26 @@ function updateLeagueOfficeUI(recordsObj) {
         // set records
         var totalResults = record['TOTAL W']+'-'+record['TOTAL L']+'-'+record['TOTAL T'];
         $($(owners[idx+1]).children()[2]).text(totalResults);
+    }
+}
+
+function updateFantasycastUI(recordsObj) {
+    var teamNames = $('.owners');
+    for (var ownerIdx = 0; ownerIdx < teamNames.length; ownerIdx++) {
+        var ownerName = teamNames[ownerIdx].childNodes[1].nodeValue.slice(0,-1);
+        var ownerRecord = teamNames[ownerIdx].childNodes[0].childNodes[0];
+    
+        var owners = recordsObj['sortedOwners'];
+        var idx;
+        for (idx = 0; idx < owners.length; idx++) {
+            if (owners[idx].indexOf(ownerName) != -1) { break; }
+        }
+
+        var owner = owners[idx];
+        console.log(ownerName, owner, idx, owners);
+        var record = recordsObj['records'][owner];
+        var totalResults = ' ('+record['TOTAL W']+'-'+record['TOTAL L']+'-'+record['TOTAL T']+')';
+        ownerRecord.nodeValue = totalResults;   // set record text
     }
 }
 
