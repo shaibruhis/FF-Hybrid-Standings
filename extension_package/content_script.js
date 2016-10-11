@@ -327,11 +327,12 @@ function updateLeagueOfficeUI(recordsObj) {
 
 function updateStandingsUI(recordsObj, tableIdx) {
     // const TABLE_HEADER = '.tableHead';
-    const OWNER_COLUMN_WIDTH = 22;
-    const NUMBER_OF_COLUMNS = 12;
+    const RANK_COLUMN_WIDTH = 2
+    const OWNER_COLUMN_WIDTH = 20;
+    const NUMBER_OF_COLUMNS = 13;
     const NUMBER_OF_EXISTING_COLUMNS = 6;
-    const COLUMN_WIDTH = ((100-OWNER_COLUMN_WIDTH)/NUMBER_OF_COLUMNS).toString() + '%';
-    const COLUMN_HEADERS = ['TEAM', 'TOTAL W', 'TOTAL L', 'TOTAL T', 'H2H W', 'H2H L', 'H2H T', 'POINTS W', 'POINTS L', 'POINTS T', 'PCT', 'GB'];
+    const COLUMN_WIDTH = ((100-OWNER_COLUMN_WIDTH-RANK_COLUMN_WIDTH)/NUMBER_OF_COLUMNS).toString() + '%';
+    const COLUMN_HEADERS = ['RANK', 'TEAM', 'TOTAL W', 'TOTAL L', 'TOTAL T', 'H2H W', 'H2H L', 'H2H T', 'POINTS W', 'POINTS L', 'POINTS T', 'PCT', 'GB'];
 
 
     function createNewColumn(columnText) {
@@ -346,7 +347,7 @@ function updateStandingsUI(recordsObj, tableIdx) {
 
     function editCells(row, owner, record) {
         // edit owner column
-        var ownerCell = $(row[0]).children().first();
+        var ownerCell = $(row[0]).children().first(); // row[0] because owner info is initially in 0th col
         $(ownerCell).text(record['teamName']);
         $(ownerCell).attr({
             title: owner,
@@ -354,12 +355,19 @@ function updateStandingsUI(recordsObj, tableIdx) {
         });
 
         // edit record
-        for (var idx = 1; idx < NUMBER_OF_COLUMNS; idx++) { // idx starts at one in row because we dont want to edit owner column
-            if (idx == 10) { // format decimal
+        for (var idx = 0; idx < NUMBER_OF_COLUMNS; idx++) { // idx starts at 2 in row because we dont want to edit owner column
+            if (idx == 0) {
+                $(row[idx]).text(record['teamRank']);
+            }
+            else if (idx == 1) {
+                $(row[idx]).empty().prepend($(ownerCell));
+                $(row[idx]).attr('align', 'left');
+            }
+            else if (idx == 11) { // format decimal
                 var percentage = record[COLUMN_HEADERS[idx]].toFixed(3); // calc % for results
                 $(row[idx]).text(percentage.toString().replace(/^0+/, ''));    // remove leading 0  
             }
-            else if (idx == 11 && record[COLUMN_HEADERS[idx]] == 0) {   // if 0 GB replace with '--'
+            else if (idx == 12 && record[COLUMN_HEADERS[idx]] == 0) {   // if 0 GB replace with '--'
                 $(row[idx]).text('--');
             }
             else { $(row[idx]).text(record[COLUMN_HEADERS[idx]]); }
@@ -368,7 +376,7 @@ function updateStandingsUI(recordsObj, tableIdx) {
 
     function updateRow(row, owner, record) {
         // add cells
-        for (var idx = NUMBER_OF_COLUMNS-NUMBER_OF_EXISTING_COLUMNS; idx < NUMBER_OF_COLUMNS; idx++) {
+        for (var idx = NUMBER_OF_EXISTING_COLUMNS; idx < NUMBER_OF_COLUMNS; idx++) {
             var newColumn = createNewColumn("");
             $(row).parent().append(newColumn);
         }
@@ -376,16 +384,16 @@ function updateStandingsUI(recordsObj, tableIdx) {
         // edit cells to show results
         row = $(row).parent().children();   //TODO: replace this with an update function
         editCells($(row), owner, record);
-        // make owner's row bolded
+        // make users's row bolded
         if ($('.nav-main-breadcrumbs').children().last().attr('title') == owner) {
             $(row).attr('style', 'font-weight:bold;');
         }
     }
 
     function updateRows(rows, recordsObj) {
-        for (var idx = 0; idx < rows.length; idx++) {
-            var owner = recordsObj['sortedOwners'][idx]
-            updateRow($(rows[idx]).children(), owner, recordsObj['records'][owner]);
+        for (var rowIdx = 0; rowIdx < rows.length; rowIdx++) {
+            var owner = recordsObj['sortedOwners'][rowIdx]
+            updateRow($(rows[rowIdx]).children(), owner, recordsObj['records'][owner]);
         }
     }
 
@@ -394,10 +402,12 @@ function updateStandingsUI(recordsObj, tableIdx) {
         // edit the preexisiting ones
         if (columnIdx <= 5) {
             $(subHeaderColumns[columnIdx]).text(columnHeaderText)
-            $(subHeaderColumns[columnIdx]).attr({
-                width: COLUMN_WIDTH,
-                title: columnHeaderText
-            });
+            if (columnIdx >= 2) {
+                $(subHeaderColumns[columnIdx]).attr({
+                    width: COLUMN_WIDTH,
+                    title: columnHeaderText
+                });
+            }
         }
         // create and add the new ones
         else {
@@ -407,8 +417,15 @@ function updateStandingsUI(recordsObj, tableIdx) {
     }
 
     function editSubHeaderColumns(subHeaderColumns) {
-        $(subHeaderColumns[0]).attr('width', OWNER_COLUMN_WIDTH.toString() + '%');
-        for (var idx = 1; idx < NUMBER_OF_COLUMNS; idx++) {
+        $(subHeaderColumns[0]).attr({
+            width: RANK_COLUMN_WIDTH.toString() + '%',
+            align: 'left'
+        });
+        $(subHeaderColumns[1]).attr({
+            width: OWNER_COLUMN_WIDTH.toString() + '%',
+            align: 'left'
+        });
+        for (var idx = 0; idx < NUMBER_OF_COLUMNS; idx++) {
             editSubHeaderColumn(idx, $(subHeaderColumns))
         }
     }
