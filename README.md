@@ -29,6 +29,7 @@ Future Ideas
 
 Known Issues
 ------
+* Extension ruins layout of finalstandings page of previous seasons
 * If there is a more than 2-way tie for the 6th highest points it still gives all the people who tied .5 wins
 
 Update Log
