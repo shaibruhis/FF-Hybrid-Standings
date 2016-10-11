@@ -22,8 +22,9 @@ Hybrid scoring is a combination of H2H and points based scoring that eliminates 
 
 Future Ideas
 ------
+* Color code standings to show who is in playoff contentio, who has clinched, who is eliminated, etc.
 * Make columns sortable
-* Show projected playoff bracket
+* Edit projected playoff bracket to reflect hybrid standings
 * Yahoo compatible
 * Update info that relies on scoring such as win streak
 
@@ -34,6 +35,8 @@ Known Issues
 
 Update Log
 ------
+* v0.4.1 (10/11/2016)
+  * Added rankings to standings page.
 * v0.4.0 (9/22/2016)
   * Added options menu to allow user to specify which of their leagues use hybrid standings.
 * v 0.3.0 (9/20/2016)
