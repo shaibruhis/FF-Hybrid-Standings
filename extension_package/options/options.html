@@ -1,24 +1,22 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Fantasy Football Hybrid Standings Options</title>
-  <link rel="stylesheet" type="text/css" href="options.css">
+  <head>
+    <title>Fantasy Football Hybrid Standings Options</title>
+    <link rel="stylesheet" type="text/css" href="options.css">
+  </head>
 
+  <body>
+    <div id="input-wrapper">
+      Add leagueId (found in URL of your league):
+      <input type="number" id="textInput" placeholder="123456">
+      <button id="add">Add</button>
+    </div>
+    <div id="leagueIDs-list-wrapper"></div>
+    
+    <button id="save">Save</button>
+    <button id="cancel">Cancel</button>
 
-</head>
-
-<body>
-  <div id="input-wrapper">
-    Add leagueId (found in URL of your league):
-    <input type="number" id="textInput" placeholder="123456">
-    <button id="add">Add</button>
-  </div>
-  <div id="leagueIDs-list-wrapper"></div>
-  
-  <button id="save">Save</button>
-  <button id="cancel">Cancel</button>
-
-  <script src="../jquery-3.1.0.min.js"></script>
-  <script src="options.js"></script>
-</body>
+    <script src="../jquery-3.1.0.min.js"></script>
+    <script src="options.js"></script>
+  </body>
 </html>
