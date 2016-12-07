@@ -211,7 +211,7 @@ function getDataFromRows(rows, tableIdx, html) {
         if (/standings/.test(url)) { updateStandingsUI(recordsToStore, tableIdx); }
         else if (/scoreboard/.test(url)) { updateScoreboardUI(recordsToStore); }
         else if (/clubhouse/.test(url)) { updateClubhouseUI(recordsToStore); }
-        else if (/leagueoffice/.test(url)) { updateLeagueOfficeUI(recordsToStore); }
+        else if (/leagueoffice/.test(url)) { updateLeagueOfficeUI(recordsToStore, tableIdx); }
         else if (/schedule/.test(url)) { updateScheduleUI(recordsToStore); }
         else if (/boxscore|matchuppreview/.test(url)) { updateBoxscoreUI(recordsToStore); }
     });
@@ -228,6 +228,7 @@ function getData() {
             getDataFromRows($($(tableHeader)[idx]).nextAll().slice(1), idx, html);  // get all rows contains owner records
             idx++;
         }
+
     });
 }
 
@@ -241,7 +242,6 @@ chrome.storage.sync.get('leagueIDs', function(leagueIDsObj) {
 
 function updateScoreboardUI(recordsObj) {
     var teams = $('td.team');
-    var numOfWeeks = 1; // get from chrome.storage
     
     for (var teamIdx = 0; teamIdx < teams.length; teamIdx++) {
         var owner = $(teams[teamIdx]).find('a').attr('title');
@@ -305,27 +305,38 @@ function updateScheduleUI(recordsObj) {
     }
 }
 
-function updateLeagueOfficeUI(recordsObj) {
+function updateLeagueOfficeUI(recordsObj, divisionIdx) {
+    var divisions = $('.lo-sidebar-box').find('.division-name');
     var owners = $('.lo-sidebar-box').last().find('tr');
     var sortedOwners = recordsObj['sortedOwners'];
+    var user = $('.league-team-names').find('a').text();
     for (var idx = 0; idx < sortedOwners.length; idx++) {
         var owner = sortedOwners[idx];
         var record = recordsObj['records'][owner];
+        var cellIdx = divisionIdx * (sortedOwners.length + 1) + (idx + 1); // (sortedOwners.length + 1) = rows for each division, (idx + 1) is because first row of each division is division name
         // set owner cell
-        var ownerCell = $(owners[idx+1]).find('a')[0];  // first row is table title so we skip it (idx+1)
+        var ownerCell = $(owners[cellIdx]).find('a')[0];
         $(ownerCell).text(record['teamName']);
         $(ownerCell).attr({
             title: owner,
-            href: ['teamLink']
+            href: record['teamLink']
         });
+        // set class="your-team" for your team
+        if (user == $(ownerCell).text()) {
+            $(ownerCell).parents('tr:first').attr('class', 'your-team');
+        }
+        // otherwise remove class="your-team"
+        else {
+            $(ownerCell).parents('tr:first').attr('class', '');
+        }
 
         // set records
         var totalResults = record['TOTAL W']+'-'+record['TOTAL L']+'-'+record['TOTAL T'];
-        $($(owners[idx+1]).children()[2]).text(totalResults);
+        $($(owners[cellIdx]).children()[2]).text(totalResults);
     }
 }
 
-function updateStandingsUI(recordsObj, tableIdx) {
+function updateStandingsUI(recordsObj, divisionIdx) {
     // const TABLE_HEADER = '.tableHead';
     const RANK_COLUMN_WIDTH = 2
     const OWNER_COLUMN_WIDTH = 20;
@@ -458,7 +469,7 @@ function updateStandingsUI(recordsObj, tableIdx) {
         // jQuery(tableHeader).detach().prependTo('thead');
     }
 
-    function addHybridDataToTable(recordsObj, tableIdx) {
+    function addHybridDataToTable(recordsObj, divisionIdx) {
         // get all tables
         var tableHeader = $(TABLE_HEADER);
 
@@ -472,10 +483,10 @@ function updateStandingsUI(recordsObj, tableIdx) {
         }
 
         // format table
-        reformatTableHeader($(tableHeader)[tableIdx]);
-        updateRows($($(tableHeader)[tableIdx]).nextAll().slice(1), recordsObj);  // we want to skip over the subheader and update all the rows after that
+        reformatTableHeader($(tableHeader)[divisionIdx]);
+        updateRows($($(tableHeader)[divisionIdx]).nextAll().slice(1), recordsObj);  // we want to skip over the subheader and update all the rows after that
     }
 
     // MAIN
-    addHybridDataToTable(recordsObj, tableIdx);
+    addHybridDataToTable(recordsObj, divisionIdx);
 }
