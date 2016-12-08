@@ -208,7 +208,8 @@ function getDataFromRows(rows, tableIdx, html) {
         //     });
         // });
         url = document.location.href;
-        if (/standings/.test(url)) { updateStandingsUI(recordsToStore, tableIdx); }
+        if (/\/standings/.test(url)) { updateStandingsUI(recordsToStore, tableIdx); }
+        else if (/finalstandings/.test(url)) { updateFinalStandingsUI(recordsToStore); }
         else if (/scoreboard/.test(url)) { updateScoreboardUI(recordsToStore); }
         else if (/clubhouse/.test(url)) { updateClubhouseUI(recordsToStore); }
         else if (/leagueoffice/.test(url)) { updateLeagueOfficeUI(recordsToStore); }
@@ -238,6 +239,19 @@ chrome.storage.sync.get('leagueIDs', function(leagueIDsObj) {
         getData();
     }
 });
+
+function updateFinalStandingsUI(recordsObj) {
+    var teams = $('#finalRankingsTable').find('.sortableRow');
+    for (var idx = 0; idx < teams.length; idx++) {
+        var owner = $(teams[idx]).find('a').attr('title');
+        var record = recordsObj['records'][owner];
+        if (record) {
+            var recordCell = $(teams[idx]).find('.sortableREC');
+            var totalResults = record['TOTAL W']+'-'+record['TOTAL L']+'-'+record['TOTAL T'];
+            $(recordCell).text(totalResults)
+        }
+    }
+}
 
 function updateScoreboardUI(recordsObj) {
     var teams = $('td.team');
