@@ -30,11 +30,13 @@ Future Ideas
 
 Known Issues
 ------
-* Records are potentially incorrect for leagues using divisions
 * If there is a more than 2-way tie for the 6th highest points it still gives all the people who tied .5 wins
 
 Update Log
 ------
+* v0.5.1 (12/8/2016)
+  * Changed where Points W calculation was getting score from to handle corner case of a league using adjusted scores.
+  * Fixed bug on certain pages in leagues using divisions where only one divisions team's would show hybrid standings.
 * v0.5.0 (12/8/2016)
   * Fixed UI on finalstandings page
   * Fixed standings on leagueoffice page

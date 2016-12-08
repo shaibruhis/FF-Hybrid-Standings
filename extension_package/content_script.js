@@ -115,7 +115,7 @@ function parseHTML(html, pointsResults) {
     for (var idx = 0; idx < scoresArray.length; idx++) {
         var owner = $(scoresArray[idx]).find('a').attr('title');
         allOwners.push(owner);     // build array of allOwners
-        var score = $(scoresArray[idx]).find('.score').attr('title');
+        var score = $(scoresArray[idx]).find('.score').text();
         if (score in scoreObjects) {
             scoreObjects[score].push(owner);
         }
@@ -241,6 +241,7 @@ chrome.storage.sync.get('leagueIDs', function(leagueIDsObj) {
     }
 });
 
+
 function updateFinalStandingsUI(recordsObj) {
     var teams = $('#finalRankingsTable').find('.sortableRow');
     for (var idx = 0; idx < teams.length; idx++) {
@@ -260,8 +261,10 @@ function updateScoreboardUI(recordsObj) {
     for (var teamIdx = 0; teamIdx < teams.length; teamIdx++) {
         var owner = $(teams[teamIdx]).find('a').attr('title');
         var record = recordsObj['records'][owner];
-        var totalResults = '('+record['TOTAL W']+'-'+record['TOTAL L']+'-'+record['TOTAL T']+')';
-        $($(teams[teamIdx]).find('.record')).text(totalResults);
+        if (record) {
+            var totalResults = '('+record['TOTAL W']+'-'+record['TOTAL L']+'-'+record['TOTAL T']+')';
+            $($(teams[teamIdx]).find('.record')).text(totalResults);
+        }
     }
 }
 
@@ -279,9 +282,11 @@ function updateBoxscoreUI(recordsObj) {
         var owner = owners[idx];
 
         var record = recordsObj['records'][owner];
-        var totalResults = ' '+record['TOTAL W']+'-'+record['TOTAL L']+'-'+record['TOTAL T']+'\u00A0\u00A0\u00A0\u00A0';
-        $(teamName).parent().parent()[0].childNodes[7].nodeValue = totalResults
-        $(teamName).parent().parent()[0].childNodes[12].nodeValue = ' '+record['teamRank'];
+        if (record) {
+            var totalResults = ' '+record['TOTAL W']+'-'+record['TOTAL L']+'-'+record['TOTAL T']+'\u00A0\u00A0\u00A0\u00A0';
+            $(teamName).parent().parent()[0].childNodes[7].nodeValue = totalResults
+            $(teamName).parent().parent()[0].childNodes[12].nodeValue = ' '+record['teamRank'];
+        }
     }
 }
 
@@ -307,14 +312,15 @@ function updateClubhouseUI(recordsObj) {
 function updateScheduleUI(recordsObj) {
     var table = $($('.tableSubHead:not(.roundsHeaders')[0]).nextAll();
     var idx = 0;
-    while ($(table[idx]).find('nobr').length) { // check to see if it has a value in the RESULE column 
+    while ($(table[idx]).find('nobr').length) { // check to see if it has a value in the RESULT column 
         row = $(table[idx]).children();
 
         var owner = $(row[3]).children().first().attr('title');
         var record = recordsObj['records'][owner];
-        var totalResults = ' ('+record['TOTAL W']+'-'+record['TOTAL L']+'-'+record['TOTAL T']+')';
-        row[3].childNodes[1].nodeValue = totalResults;
-
+        if (record) {
+            var totalResults = ' ('+record['TOTAL W']+'-'+record['TOTAL L']+'-'+record['TOTAL T']+')';
+            row[3].childNodes[1].nodeValue = totalResults;
+        }
         idx++;
     }
 }
