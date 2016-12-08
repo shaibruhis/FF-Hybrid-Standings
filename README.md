@@ -35,6 +35,9 @@ Known Issues
 
 Update Log
 ------
+* v0.5.0 (12/8/2016)
+  * Fixed UI on finalstandings page
+  * Fixed standings on leagueoffice page
 * v0.4.1 (10/11/2016)
   * Added rankings to standings page.
 * v0.4.0 (9/22/2016)
