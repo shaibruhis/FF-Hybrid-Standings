@@ -30,9 +30,7 @@ Future Ideas
 
 Known Issues
 ------
-* Extension ruins layout of finalstandings page of previous seasons
-* League office shows incorrect standings for leagues using divisions
-* Records aren't correct for leagues using divisions
+* Records are potentially incorrect for leagues using divisions
 * If there is a more than 2-way tie for the 6th highest points it still gives all the people who tied .5 wins
 
 Update Log
