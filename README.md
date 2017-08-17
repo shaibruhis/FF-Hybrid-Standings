@@ -34,6 +34,8 @@ Known Issues
 
 Update Log
 ------
+* v0.6.0 (8/16/2017)
+  * Made extension work for 2017 season
 * v0.5.1 (12/8/2016)
   * Changed where Points W calculation was getting score from to handle corner case of a league using adjusted scores.
   * Fixed bug on certain pages in leagues using divisions where only one divisions team's would show hybrid standings.
