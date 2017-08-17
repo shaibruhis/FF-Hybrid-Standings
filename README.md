@@ -22,7 +22,7 @@ Hybrid scoring is a combination of H2H and points based scoring that eliminates 
 
 Future Ideas
 ------
-* Color code standings to show who is in playoff contentio, who has clinched, who is eliminated, etc.
+* Color code standings to show who is in playoff contention, who has clinched, who is eliminated, etc.
 * Make columns sortable
 * Edit projected playoff bracket to reflect hybrid standings
 * Yahoo compatible
@@ -31,6 +31,7 @@ Future Ideas
 Known Issues
 ------
 * If there is a more than 2-way tie for the 6th highest points it still gives all the people who tied .5 wins
+* Currently before week 1 of the season, the standings page looks exactly the same. I want to add all the other columns and fill them with 0s.
 
 Update Log
 ------
