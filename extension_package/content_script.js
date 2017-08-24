@@ -4,7 +4,7 @@ function getLeagueID() {
 }
 
 function getSeasonID() {
-    var seasonID = "2017";
+    var seasonID = "2016";
     var matches = document.URL.match(/seasonId=(\d+)/);
     if (matches) {
         seasonID = matches[1];
@@ -64,9 +64,14 @@ function sortRecords(records) {
     return sortedOwners;
 }
 
-function addPFToRecord(html ,record, teamIdx) {
-    var pointsFor = $(html).find('.sortablePF');
-    record['PF'] = parseFloat($(pointsFor[teamIdx]).text());    // want to add pf inside the obj inside record
+function addPFToRecord(html ,record) {
+    var pointsForRows = $(html).find('.sortablePF');
+    // make an array of just the text inside the <a> tags
+    var teamNames = pointsForRows.prev().find('a').map(function(){return $(this).text();}).get();
+    var teamNameIdx = teamNames.indexOf(record["teamName"]);
+    // console.log(teamNameIdx);
+	record['PF'] = parseFloat($(pointsForRows[teamNameIdx]).text());    // want to add pf inside the obj inside record
+	// console.log(record);
     return record;
 }
 
@@ -189,9 +194,10 @@ function getDataFromRows(rows, tableIdx, html) {
         var recordsToStore = {}
         recordsToStore['numOfWeeks'] = numOfWeeks;
         var records = {}
+        // TODO: remove for loop and pass in full array into addPFToRecord
         for (var teamIdx = 0; teamIdx < rows.length; teamIdx++) {
             var ownerRecordObj = getDataFromRow($(rows[teamIdx]).children(), numOfWeeks, pointsResults);
-            ownerRecordObj['results'] = addPFToRecord(html, ownerRecordObj['results'], teamIdx);
+            ownerRecordObj['results'] = addPFToRecord(html, ownerRecordObj['results']);
             records[ownerRecordObj['owner']] = ownerRecordObj['results'];
         }
 
