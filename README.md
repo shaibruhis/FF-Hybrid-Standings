@@ -35,9 +35,7 @@ Known Issues
 
 Update Log
 ------
-* BETA - v0.6.2 (8/24/2017) 
-  * Fixed bug: Points For wasn't properly set for each team resulting in wrong tie-breakers.
-* BETA - v0.6.1 (8/24/2017) 
+* v0.6.3 (8/27/2017) 
   * Fixed bug: Points For wasn't properly set for each team resulting in wrong tie-breakers.
 * v0.6.0 (8/16/2017)
   * Made extension work for 2017 season
