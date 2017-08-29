@@ -69,14 +69,15 @@ function addPFToRecord(html ,record) {
     // make an array of just the text inside the <a> tags
     var teamNames = pointsForRows.prev().find('a').map(function(){return $(this).text();}).get();
     var teamNameIdx = teamNames.indexOf(record["teamName"]);
-    // console.log(teamNameIdx);
 	record['PF'] = parseFloat($(pointsForRows[teamNameIdx]).text());    // want to add pf inside the obj inside record
-	// console.log(record);
     return record;
 }
 
 function getPercentage(results, numOfWeeks) {
-    return (results['TOTAL W']+(results['TOTAL T']*0.5))/(2*numOfWeeks); // calc % for results
+    // calc % for results
+    var percentage = (results['TOTAL W'] + (results['TOTAL T'] * 0.5)) / (2 * numOfWeeks);
+    // if season hasn't began (numOfWeeks == 0) return 0
+    return  numOfWeeks == 0 ? 0 : percentage;   
 }
 
 function getTotalResults(H2HResults, pointsResults) {
@@ -139,6 +140,11 @@ function parseHTML(html, pointsResults) {
         }
     }
 
+    // if season hasn't began return 0s for W,T,L for all owners
+    if (0 in scoreObjects && scoreObjects[0].length == allOwners.length) {
+        return pointsResults;
+    }
+
     // adds results to pointresults
     var count = 1
     for (var scoreIdx = 0; scoreIdx < scoreObjectsKeys.length; scoreIdx++) {
@@ -166,16 +172,27 @@ function parseHTML(html, pointsResults) {
 
 function getPointsResults(numOfWeeks, rows, completionHandler) {
     var pointsResults = {};     // {'owner1':[W,L,T], 'owner2':[W,L,T], etc}
-    var count = 0;
-    for (var weekNum = 1; weekNum <= numOfWeeks; weekNum++) {
-        $.get(SCOREBOARD_URL+weekNum, function(data) {
+    
+    // if the season hasn't began parse week 1's scoreboard URL
+    if (numOfWeeks == 0) {
+        $.get(SCOREBOARD_URL+1, function(data) {
             pointsResults = parseHTML(data, pointsResults);
-            count++;
-            if(count > numOfWeeks - 1) {    // make sure all async calls completed
-                completionHandler(rows, pointsResults);
-            }
+            completionHandler(rows, pointsResults);
         });
     }
+    else {
+        var count = 0;
+        for (var weekNum = 1; weekNum <= numOfWeeks; weekNum++) {
+            $.get(SCOREBOARD_URL+weekNum, function(data) {
+                pointsResults = parseHTML(data, pointsResults);
+                count++;
+                if(count > numOfWeeks - 1) {    // make sure all async calls completed
+                    completionHandler(rows, pointsResults);
+                }
+            });
+        }
+    }
+    
 }
 
 function getNumOfWeeks(results) {

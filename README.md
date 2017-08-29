@@ -35,6 +35,8 @@ Known Issues
 
 Update Log
 ------
+* v0.7.0 (8/29/2017) 
+  * Fixed bug: Hybrid standings were only showing after week 1 finished.
 * v0.6.3 (8/27/2017) 
   * Fixed bug: Points For wasn't properly set for each team resulting in wrong tie-breakers.
 * v0.6.0 (8/16/2017)
