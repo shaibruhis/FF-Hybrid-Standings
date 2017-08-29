@@ -1,10 +1,10 @@
 {
   "manifest_version": 2,
 
-  "name": "Fantasy Football Hybrid Standings",
+  "name": "BETA - Fantasy Football Hybrid Standings",
   "version": "0.7.0",
 
-  "description": "Adds ability to see a hybrid standings (H2H winner and highest points) scoring system on the ESPN Standings page.",
+  "description": "BETA - Adds ability to see a hybrid standings (H2H winner and highest points) scoring system on the ESPN Standings page.",
   "icons": {  
               "128": "assets/icon128.png"
   },
