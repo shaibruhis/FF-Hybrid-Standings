@@ -27,11 +27,11 @@ Future Ideas
 * Edit projected playoff bracket to reflect hybrid standings
 * Yahoo compatible
 * Update info that relies on scoring such as win streak
+* Make alert to remind LM to adjust playoff schedule based on hybrid stndings
 
 Known Issues
 ------
 * If there is a more than 2-way tie for the 6th highest points it still gives all the people who tied .5 wins
-* Currently before week 1 of the season, the standings page looks exactly the same. I want to add all the other columns and fill them with 0s.
 
 Update Log
 ------
