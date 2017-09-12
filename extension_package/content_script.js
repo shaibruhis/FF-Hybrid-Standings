@@ -142,6 +142,13 @@ function useSortedScoreObjectToCalculatePointsResults(pointsResults, sortedScore
         }
     }
 
+
+    var scoreObjects = sortedScoreObjects['scoreObjects'];
+    // if the season hasn't started yet, return
+    if (0 in scoreObjects && scoreObjects[0].length == allOwners.length) {
+        return pointsResults;
+    }
+
     // adds results to pointsResults
     var sortedScoreObjectsKeys = sortedScoreObjects['sortedScoreObjectsKeys'];
     var scoreObjects = sortedScoreObjects['scoreObjects'];
@@ -195,27 +202,28 @@ function usePointsResultsToChangeUIForWeeklyPointsWinners() {
                 team = $(team).parents('.team');
                 if (count <= allOwners.length/2) {
                     // turn bg green with the highest points the most green
-                    var colorMultiplier = 1 - (.75 * (count / (allOwners.length/2)));
+                    // make multiplier based off of rank -> use multiplier to make bg gradient color (like in google docs conditional formatting)
+                    var colorMultiplier = 1 - (.8 * (count / (allOwners.length/2)));
                     var colorLevel = (255 * colorMultiplier).toFixed().toString();
-                    console.log(colorLevel);
+                    var alphaLevel = 1 * colorMultiplier
+                    var endAlphaLevel = alphaLevel.toString();
+                    var startAlphaLevel = (alphaLevel - 0.25).toString();
                     $(team).removeAttr('background');
-                    $(team).css('background', 'linear-gradient(to bottom, rgba(0,'+colorLevel+',0,0.3), rgba(0,'+colorLevel+',0,1))');
+                    $(team).css('background', 'linear-gradient(to bottom, rgba(0,'+colorLevel+',0,'+startAlphaLevel+'), rgba(0,'+colorLevel+',0,'+endAlphaLevel+'))');
                 }
                 // TODO: handle UI for when their is a tie
                 else {
                     // turn bg red with the lowest points the most red
-                    var colorMultiplier = 1 - .75 * ((allOwners.length - count) / (allOwners.length/2));
+                    var colorMultiplier = 1 - (.8 * ((allOwners.length - count) / (allOwners.length/2)));
                     var colorLevel = (255 * colorMultiplier).toFixed().toString();
-                    $(team).removeAttr('background');
-                    $(team).css('background', 'linear-gradient(to bottom, rgba('+colorLevel+',0,0,0.3), rgba('+colorLevel+',0,0,1))');
+                    var alphaLevel = 1 * colorMultiplier
+                    var endAlphaLevel = alphaLevel.toString();
+                    var startAlphaLevel = (alphaLevel - 0.25).toString();                    $(team).removeAttr('background');
+                    $(team).css('background', 'linear-gradient(to bottom, rgba('+colorLevel+',0,0,'+startAlphaLevel+'), rgba('+colorLevel+',0,0,'+endAlphaLevel+'))');
                 }
             }
         }
     });
-
-    // make multiplier based off of rank -> use multiplier to make bg gradient color (like in google docs conditional formatting)
-
-
 }
 
 function getPointsResults(numOfWeeks, rows, completionHandler) {
@@ -225,7 +233,9 @@ function getPointsResults(numOfWeeks, rows, completionHandler) {
     if (numOfWeeks == 0) {
         $.get(SCOREBOARD_URL+1, function(html) {
             sortedScoreObjects = getScoreObjectsForSingleWeek(html);
+            console.log(sortedScoreObjects);
             pointsResults = useSortedScoreObjectToCalculatePointsResults(pointsResults, sortedScoreObjects);
+            console.log(pointsResults);
             completionHandler(rows, pointsResults);
         });
     }
