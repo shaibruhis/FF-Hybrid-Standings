@@ -174,9 +174,15 @@ function usePointsResultsToChangeUIForWeeklyPointsWinners() {
     $.get(SCOREBOARD_URL+weekNum, function(html) {
         // get sortedScoreObjects for specifitc week
         var sortedScoreObjects = getScoreObjectsForSingleWeek(html);
-        var allOwners = $.map(sortedScoreObjects['scoreObjects'], function(value, key) { return value });
-        var sortedScoreObjectsKeys = sortedScoreObjects['sortedScoreObjectsKeys'];
+
         var scoreObjects = sortedScoreObjects['scoreObjects'];
+        var allOwners = $.map(sortedScoreObjects['scoreObjects'], function(value, key) { return value });
+        // if the week hasn't been played yet, don't paint the UI
+        if (0 in scoreObjects && scoreObjects[0].length == allOwners.length) {
+            return;
+        }
+
+        var sortedScoreObjectsKeys = sortedScoreObjects['sortedScoreObjectsKeys'];
         var count = 0
         // go through each scoreObject and set background of the teams with that score
         for (var scoreIdx = 0; scoreIdx < sortedScoreObjectsKeys.length; scoreIdx++) {
