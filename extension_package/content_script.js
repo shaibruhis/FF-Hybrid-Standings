@@ -113,14 +113,12 @@ function getDataFromRow(row, numOfWeeks, pointsResults) {
     return obj;
 }
 
-function parseHTML(html, pointsResults) {
+function getScoreObjectsForSingleWeek(html) {
     var scoreObjects = {};      // {100: [owner1], 98.7: [owner2,owner3], etc}
-    var allOwners = [];
     // populate scoresObject
     var scoresArray = $(html).find('[id^=teamscrg_]');
     for (var idx = 0; idx < scoresArray.length; idx++) {
         var owner = $(scoresArray[idx]).find('a').attr('title');
-        allOwners.push(owner);     // build array of allOwners
         var score = $(scoresArray[idx]).find('.score').text();
         if (score in scoreObjects) {
             scoreObjects[score].push(owner);
@@ -129,9 +127,13 @@ function parseHTML(html, pointsResults) {
             scoreObjects[score] = [owner];   
         }
     }
-
     // get keys and sort them so we can get high scores from dict
-    var scoreObjectsKeys = Object.keys(scoreObjects).sort(function(a, b) { return parseFloat(b)-parseFloat(a); } );
+    var sortedScoreObjectsKeys = Object.keys(scoreObjects).sort(function(a, b) { return parseFloat(b)-parseFloat(a); } );
+    return {'sortedScoreObjectsKeys': sortedScoreObjectsKeys, 'scoreObjects': scoreObjects};
+}
+
+function useSortedScoreObjectToCalculatePointsResults(pointsResults, sortedScoreObjects) {
+    var allOwners = $.map(sortedScoreObjects['scoreObjects'], function(value, key) { return value });
 
     // initialize pointsResults
     if (jQuery.isEmptyObject(pointsResults)) {
@@ -140,15 +142,12 @@ function parseHTML(html, pointsResults) {
         }
     }
 
-    // if season hasn't began return 0s for W,T,L for all owners
-    if (0 in scoreObjects && scoreObjects[0].length == allOwners.length) {
-        return pointsResults;
-    }
-
-    // adds results to pointresults
+    // adds results to pointsResults
+    var sortedScoreObjectsKeys = sortedScoreObjects['sortedScoreObjectsKeys'];
+    var scoreObjects = sortedScoreObjects['scoreObjects'];
     var count = 1
-    for (var scoreIdx = 0; scoreIdx < scoreObjectsKeys.length; scoreIdx++) {
-        var owners = scoreObjects[scoreObjectsKeys[scoreIdx]];
+    for (var scoreIdx = 0; scoreIdx < sortedScoreObjectsKeys.length; scoreIdx++) {
+        var owners = scoreObjects[sortedScoreObjectsKeys[scoreIdx]];
         for (var ownerIdx = 0; ownerIdx < owners.length; ownerIdx++) {
             if (count < allOwners.length/2) {
                 pointsResults[owners[ownerIdx]][0]++;  // increase owners wins by 1
@@ -170,21 +169,66 @@ function parseHTML(html, pointsResults) {
     return pointsResults;
 }
 
+function usePointsResultsToChangeUIForWeeklyPointsWinners() {
+    var weekNum = $('.games-pageheader').find('em').text().split(' ')[1];
+    $.get(SCOREBOARD_URL+weekNum, function(html) {
+        // get sortedScoreObjects for specifitc week
+        var sortedScoreObjects = getScoreObjectsForSingleWeek(html);
+        var allOwners = $.map(sortedScoreObjects['scoreObjects'], function(value, key) { return value });
+        var sortedScoreObjectsKeys = sortedScoreObjects['sortedScoreObjectsKeys'];
+        var scoreObjects = sortedScoreObjects['scoreObjects'];
+        var count = 0
+        // go through each scoreObject and set background of the teams with that score
+        for (var scoreIdx = 0; scoreIdx < sortedScoreObjectsKeys.length; scoreIdx++) {
+            var ownersForScoreIdx = scoreObjects[sortedScoreObjectsKeys[scoreIdx]];
+            count += ownersForScoreIdx.length // increase the count by the number of people that had this score
+            for (var ownerIdx = 0; ownerIdx < ownersForScoreIdx.length; ownerIdx++) {
+                var team = ownersForScoreIdx[ownerIdx].addSlashes();
+                // find the team td that matches the team name
+                team = $("a[title*='"+team+"']");
+                team = $(team).parents('.team');
+                if (count <= allOwners.length/2) {
+                    // turn bg green with the highest points the most green
+                    var colorMultiplier = 1 - (.75 * (count / (allOwners.length/2)));
+                    var colorLevel = (255 * colorMultiplier).toFixed().toString();
+                    console.log(colorLevel);
+                    $(team).removeAttr('background');
+                    $(team).css('background', 'linear-gradient(to bottom, rgba(0,'+colorLevel+',0,0.3), rgba(0,'+colorLevel+',0,1))');
+                }
+                // TODO: handle UI for when their is a tie
+                else {
+                    // turn bg red with the lowest points the most red
+                    var colorMultiplier = 1 - .75 * ((allOwners.length - count) / (allOwners.length/2));
+                    var colorLevel = (255 * colorMultiplier).toFixed().toString();
+                    $(team).removeAttr('background');
+                    $(team).css('background', 'linear-gradient(to bottom, rgba('+colorLevel+',0,0,0.3), rgba('+colorLevel+',0,0,1))');
+                }
+            }
+        }
+    });
+
+    // make multiplier based off of rank -> use multiplier to make bg gradient color (like in google docs conditional formatting)
+
+
+}
+
 function getPointsResults(numOfWeeks, rows, completionHandler) {
     var pointsResults = {};     // {'owner1':[W,L,T], 'owner2':[W,L,T], etc}
     
     // if the season hasn't began parse week 1's scoreboard URL
     if (numOfWeeks == 0) {
-        $.get(SCOREBOARD_URL+1, function(data) {
-            pointsResults = parseHTML(data, pointsResults);
+        $.get(SCOREBOARD_URL+1, function(html) {
+            sortedScoreObjects = getScoreObjectsForSingleWeek(html);
+            pointsResults = useSortedScoreObjectToCalculatePointsResults(pointsResults, sortedScoreObjects);
             completionHandler(rows, pointsResults);
         });
     }
     else {
         var count = 0;
         for (var weekNum = 1; weekNum <= numOfWeeks; weekNum++) {
-            $.get(SCOREBOARD_URL+weekNum, function(data) {
-                pointsResults = parseHTML(data, pointsResults);
+            $.get(SCOREBOARD_URL+weekNum, function(html) {
+                sortedScoreObjects = getScoreObjectsForSingleWeek(html);
+                pointsResults = useSortedScoreObjectToCalculatePointsResults(pointsResults, sortedScoreObjects);
                 count++;
                 if(count > numOfWeeks - 1) {    // make sure all async calls completed
                     completionHandler(rows, pointsResults);
@@ -192,7 +236,6 @@ function getPointsResults(numOfWeeks, rows, completionHandler) {
             });
         }
     }
-    
 }
 
 function getNumOfWeeks(results) {
@@ -282,13 +325,17 @@ function updateScoreboardUI(recordsObj) {
     var teams = $('td.team');
     
     for (var teamIdx = 0; teamIdx < teams.length; teamIdx++) {
-        var owner = $(teams[teamIdx]).find('a').attr('title');
+        var team = teams[teamIdx];
+        // set record
+        var owner = $(team).find('a').attr('title');
         var record = recordsObj['records'][owner];
         if (record) {
             var totalResults = '('+record['TOTAL W']+'-'+record['TOTAL L']+'-'+record['TOTAL T']+')';
-            $($(teams[teamIdx]).find('.record')).text(totalResults);
+            $($(team).find('.record')).text(totalResults);
         }
     }
+    // set background color
+    usePointsResultsToChangeUIForWeeklyPointsWinners();
 }
 
 function updateBoxscoreUI(recordsObj) {
@@ -533,3 +580,10 @@ function updateStandingsUI(recordsObj, divisionIdx) {
     // MAIN
     addHybridDataToTable(recordsObj, divisionIdx);
 }
+
+
+// Utility Methods
+String.prototype.addSlashes = function() { 
+   //no need to do (str+'') anymore because 'this' can only be a string
+   return this.replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+} 
