@@ -35,8 +35,8 @@ Known Issues
 
 Update Log
 ------
-* BETA - v0.8.0 (9/12/2017) 
-  * Scoreboard page now shows color coded Points Winners and Points Losers for that week.
+* BETA - v0.8.1 (9/12/2017) 
+  * Scoreboard page now shows color coded table with Points Winners and Points Losers for that week.
 * v0.7.0 (8/29/2017) 
   * Fixed bug: Hybrid standings were only showing after week 1 finished.
 * v0.6.3 (8/27/2017) 
