@@ -189,6 +189,18 @@ function usePointsResultsToChangeUIForWeeklyPointsWinners() {
             return;
         }
 
+        // add the points standings table to the page
+        var pointsStandingsTable = $('<table id=pointsStandings></table>');
+        $(pointsStandingsTable).appendTo($('#scoreboardMatchups').children()[0]);
+        // get the rows from the existing table and clone them
+        var teamRows = $('[id^=teamscrg_]');
+        clonedTeamRows = [];
+        for (var teamIdx = 0; teamIdx < teamRows.length; teamIdx++) {
+            var teamRow = teamRows[teamIdx];
+            newTeamRow = $(teamRow).clone();
+            clonedTeamRows.push(newTeamRow);
+        }
+
         var sortedScoreObjectsKeys = sortedScoreObjects['sortedScoreObjectsKeys'];
         var count = 0
         // go through each scoreObject and set background of the teams with that score
@@ -196,30 +208,37 @@ function usePointsResultsToChangeUIForWeeklyPointsWinners() {
             var ownersForScoreIdx = scoreObjects[sortedScoreObjectsKeys[scoreIdx]];
             count += ownersForScoreIdx.length // increase the count by the number of people that had this score
             for (var ownerIdx = 0; ownerIdx < ownersForScoreIdx.length; ownerIdx++) {
-                var team = ownersForScoreIdx[ownerIdx].addSlashes();
-                // find the team td that matches the team name
-                team = $("a[title*='"+team+"']");
-                team = $(team).parents('.team');
-                if (count <= allOwners.length/2) {
-                    // turn bg green with the highest points the most green
-                    // make multiplier based off of rank -> use multiplier to make bg gradient color (like in google docs conditional formatting)
-                    var colorMultiplier = 1 - (.8 * (count / (allOwners.length/2)));
-                    var colorLevel = (255 * colorMultiplier).toFixed().toString();
-                    var alphaLevel = 1 * colorMultiplier
-                    var endAlphaLevel = alphaLevel.toString();
-                    var startAlphaLevel = (alphaLevel - 0.25).toString();
-                    $(team).removeAttr('background');
-                    $(team).css('background', 'linear-gradient(to bottom, rgba(0,'+colorLevel+',0,'+startAlphaLevel+'), rgba(0,'+colorLevel+',0,'+endAlphaLevel+'))');
-                }
-                // TODO: handle UI for when their is a tie
-                else {
-                    // turn bg red with the lowest points the most red
-                    var colorMultiplier = 1 - (.8 * ((allOwners.length - count) / (allOwners.length/2)));
-                    var colorLevel = (255 * colorMultiplier).toFixed().toString();
-                    var alphaLevel = 1 * colorMultiplier
-                    var endAlphaLevel = alphaLevel.toString();
-                    var startAlphaLevel = (alphaLevel - 0.25).toString();                    $(team).removeAttr('background');
-                    $(team).css('background', 'linear-gradient(to bottom, rgba('+colorLevel+',0,0,'+startAlphaLevel+'), rgba('+colorLevel+',0,0,'+endAlphaLevel+'))');
+                var team = ownersForScoreIdx[ownerIdx];
+                // find the team <td> that matches the team name
+                for (var teamRowIdx = 0; teamRowIdx < clonedTeamRows.length; teamRowIdx++) {
+                    var teamRow = clonedTeamRows[teamRowIdx];
+                    if ($($(teamRow).find('a')[0]).attr('title') == team) {
+                        team = $(teamRow).children('.team')[0];
+                        if (count <= allOwners.length/2) {
+                            // turn bg green with the highest points the most green
+                            // make multiplier based off of rank -> use multiplier to make bg gradient color (like in google docs conditional formatting)
+                            var colorMultiplier = 1 - (.8 * (count / (allOwners.length/2)));
+                            var colorLevel = (255 * colorMultiplier).toFixed().toString();
+                            var alphaLevel = 1 * colorMultiplier
+                            var endAlphaLevel = alphaLevel.toString();
+                            var startAlphaLevel = (alphaLevel - 0.25).toString();
+                            $(team).removeAttr('background');
+                            $(team).css('background', 'linear-gradient(to bottom, rgba(0,'+colorLevel+',0,'+startAlphaLevel+'), rgba(0,'+colorLevel+',0,'+endAlphaLevel+'))');
+                        }
+                        // TODO: handle UI for when their is a tie
+                        else {
+                            // turn bg red with the lowest points the most red
+                            var colorMultiplier = 1 - (.8 * ((allOwners.length - count) / (allOwners.length/2)));
+                            var colorLevel = (255 * colorMultiplier).toFixed().toString();
+                            var alphaLevel = 1 * colorMultiplier
+                            var endAlphaLevel = alphaLevel.toString();
+                            var startAlphaLevel = (alphaLevel - 0.25).toString();                    $(team).removeAttr('background');
+                            $(team).css('background', 'linear-gradient(to bottom, rgba('+colorLevel+',0,0,'+startAlphaLevel+'), rgba('+colorLevel+',0,0,'+endAlphaLevel+'))');
+                        }
+
+                        // add cloned row to points standings table
+                        $(teamRow).appendTo(pointsStandingsTable);
+                    }
                 }
             }
         }
