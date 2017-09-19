@@ -15,9 +15,13 @@ This extension provides users with the ability to see the standings of their lea
 
 Hybrid scoring is a combination of H2H and points based scoring that eliminates the luck of scheduling from the game. Every week you have the ability to get 2 wins. 1 win you get by winning your matchup. The second "win" you get if you finish the week in the top half of scores.  For example if you put up 110 and your opponent puts up 120, but your score of 110 would have beat anyone else that week you would go 1-1 that week while your opponent would go 2-0.
 
- It looks like this:
+It looks like this:
 
+<b>Standings Page</b>
 ![Standings Preview](assets/github_screenshot1.png)
+
+
+<b>Scoreboard Page</b>
 ![Scoreboard Preview](assets/github_screenshot2.png)
 
 
