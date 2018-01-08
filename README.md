@@ -66,3 +66,9 @@ Thanks
 ------
 * Thanks to Brett Woodward's [FantasyPlus](https://github.com/flipperbw/FantasyPlus) and Thomas Beutler's [FantasyTargets](https://github.com/tcbeutler/FantasyTargets) for providing me with inspiration to build this and give back to the Fantasy community.
 * Thanks to Danny Eliahu for the photoshop work and nice graphics!
+
+Donations
+------
+BTC: 17Rr3TcvafC4yfBJ4mvqMDq8C1RQGeEfFD
+ETH: 0xf6b1d2ed5282fa95a6e7e52b56f14b522a8d44c7
+LTC: Lej1QW7xvBbomeKQdGAW2ATDG8PwpEtDz7
