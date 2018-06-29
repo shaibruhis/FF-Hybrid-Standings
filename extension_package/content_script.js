@@ -4,7 +4,7 @@ function getLeagueID() {
 }
 
 function getSeasonID() {
-    var seasonID = "2017";
+    var seasonID = "2018";
     var matches = document.URL.match(/seasonId=(\d+)/);
     if (matches) {
         seasonID = matches[1];

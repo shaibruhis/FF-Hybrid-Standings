@@ -35,6 +35,8 @@ Known Issues
 
 Update Log
 ------
+* v0.8.0 (6/28/2018) 
+  * Made extension work for 2018 season
 * v0.7.0 (8/29/2017) 
   * Fixed bug: Hybrid standings were only showing after week 1 finished.
 * v0.6.3 (8/27/2017) 
