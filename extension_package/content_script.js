@@ -20,6 +20,8 @@ const LEAGUE_ID = getLeagueID();
 const SEASON_ID = getSeasonID();
 const SCOREBOARD_URL = 'http://games.espn.com/ffl/scoreboard?leagueId='+LEAGUE_ID+'&seasonId='+SEASON_ID+'&matchupPeriodId=';
 const STANDINGS_URL = 'http://games.espn.com/ffl/standings?leagueId='+LEAGUE_ID+'&seasonId='+SEASON_ID;
+var TIE_BREAKER;
+
 
 
 function addRank(records, sortedOwners) {
@@ -56,10 +58,10 @@ var firstBy=function(){function n(n){return n}function t(n){return"string"==type
 
 function sortRecords(records) {
     var sortedOwners = Object.keys(records).sort(
-        firstBy(function(a,b) { return records[a]['TOTAL W'] - records[b]['TOTAL W']; }, -1) // TOTAL W
-        .thenBy(function(a,b) { return records[a]['H2H W'] - records[b]['H2H W']; }, -1)  // H2H W
-        .thenBy(function(a,b) { return records[a]['POINTS W'] - records[b]['POINTS W']; }, -1)  // POINTS W
-        .thenBy(function(a,b) { return records[a]['PF'] - records[b]['PF']; }, -1) // PF
+        firstBy(function(a,b) { return records[a]['TOTAL W'] - records[b]['TOTAL W']; }, -1)
+        .thenBy(function(a,b) { return records[a][TIE_BREAKER] - records[b][TIE_BREAKER]; }, -1)
+        .thenBy(function(a,b) { return records[a]['H2H W'] - records[b]['H2H W']; }, -1)
+        .thenBy(function(a,b) { return records[a]['PF'] - records[b]['PF']; }, -1)
     );
     return sortedOwners;
 }
@@ -223,13 +225,7 @@ function getDataFromRows(rows, tableIdx, html) {
         records = addRank(records, sortedOwners);
         recordsToStore['records'] = records;
         recordsToStore['sortedOwners'] = sortedOwners;
-        
-        // // store data
-        // chrome.storage.local.set(recordsToStore, function() {
-        //     chrome.storage.local.get(function(object) {
-        //         console.log(object);
-        //     });
-        // });
+
         url = document.location.href;
         if (/\/standings/.test(url)) { updateStandingsUI(recordsToStore, tableIdx); }
         else if (/finalstandings/.test(url)) { updateFinalStandingsUI(recordsToStore); }
@@ -260,6 +256,7 @@ function getData() {
 // MAIN
 chrome.storage.sync.get('leagueIDs', function(leagueIDsObj) {
     if (Object.keys(leagueIDsObj['leagueIDs']['espn']).indexOf(LEAGUE_ID) != -1) {
+        TIE_BREAKER = leagueIDsObj['leagueIDs']['espn'][LEAGUE_ID]['tie-breaker'];
         getData();
     }
 });
@@ -380,7 +377,6 @@ function updateLeagueOfficeUI(recordsObj, divisionIdx) {
 }
 
 function updateStandingsUI(recordsObj, divisionIdx) {
-    // const TABLE_HEADER = '.tableHead';
     const RANK_COLUMN_WIDTH = 2
     const OWNER_COLUMN_WIDTH = 20;
     const NUMBER_OF_COLUMNS = 13;

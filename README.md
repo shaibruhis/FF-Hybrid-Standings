@@ -35,6 +35,8 @@ Known Issues
 
 Update Log
 ------
+* v0.9.0 (8/4/2018) 
+  * Added ability to set tie breaker criteria in the options menu of this extension.
 * v0.8.0 (6/28/2018) 
   * Made extension work for 2018 season
 * v0.7.0 (8/29/2017) 
