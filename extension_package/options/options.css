@@ -8,11 +8,16 @@ body {
 }
 
 .leagueIDs-list-item {
-    height: 35px;
+    height: 55px;
+    margin-bottom: 10px;
 }
 
 .remove {
     float: right;
+}
+
+.tie-breaker {
+	margin-left: 10px;
 }
 
 input[type=number]::-webkit-inner-spin-button,
