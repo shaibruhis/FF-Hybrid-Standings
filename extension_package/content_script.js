@@ -115,7 +115,7 @@ function getDataFromRow(row, numOfWeeks, pointsResults) {
     return obj;
 }
 
-function parseHTML(html, pointsResults) {
+function parseHTML(numOfWeeks, html, pointsResults) {
     var scoreObjects = {};      // {100: [owner1], 98.7: [owner2,owner3], etc}
     var allOwners = [];
     // populate scoresObject
@@ -131,7 +131,6 @@ function parseHTML(html, pointsResults) {
             scoreObjects[score] = [owner];   
         }
     }
-
     // get keys and sort them so we can get high scores from dict
     var scoreObjectsKeys = Object.keys(scoreObjects).sort(function(a, b) { return parseFloat(b)-parseFloat(a); } );
 
@@ -141,9 +140,8 @@ function parseHTML(html, pointsResults) {
             pointsResults[allOwners[idx]] = [0,0,0];
         }
     }
-
     // if season hasn't began return 0s for W,T,L for all owners
-    if (0 in scoreObjects && scoreObjects[0].length == allOwners.length) {
+    if (numOfWeeks == 0) {
         return pointsResults;
     }
 
@@ -178,7 +176,7 @@ function getPointsResults(numOfWeeks, rows, completionHandler) {
     // if the season hasn't began parse week 1's scoreboard URL
     if (numOfWeeks == 0) {
         $.get(SCOREBOARD_URL+1, function(data) {
-            pointsResults = parseHTML(data, pointsResults);
+            pointsResults = parseHTML(numOfWeeks, data, pointsResults);
             completionHandler(rows, pointsResults);
         });
     }
@@ -186,7 +184,7 @@ function getPointsResults(numOfWeeks, rows, completionHandler) {
         var count = 0;
         for (var weekNum = 1; weekNum <= numOfWeeks; weekNum++) {
             $.get(SCOREBOARD_URL+weekNum, function(data) {
-                pointsResults = parseHTML(data, pointsResults);
+                pointsResults = parseHTML(numOfWeeks, data, pointsResults);
                 count++;
                 if(count > numOfWeeks - 1) {    // make sure all async calls completed
                     completionHandler(rows, pointsResults);
@@ -241,7 +239,6 @@ function getData() {
     $.get(STANDINGS_URL, function(html) {
         // get all tables
         var tableHeader = $(html).find(TABLE_HEADER);
-        // console.log(tableHeader);
         // format each table
         var idx = 0;
         while ($($(tableHeader)[idx]).parents('table:first').attr('id') != 'xstandTbl_div0' && idx <= tableHeader.length) {
