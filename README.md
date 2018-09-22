@@ -35,6 +35,8 @@ Known Issues
 
 Update Log
 ------
+* v0.11.0 (9/22/2018) 
+  * Fixed bug where selected tie breaker option wasn't showing correctly in options menu of this extension.
 * v0.10.0 (9/9/2018) 
   * Fixed bug where points wins were being calculated mid week.
 * v0.9.0 (8/4/2018) 

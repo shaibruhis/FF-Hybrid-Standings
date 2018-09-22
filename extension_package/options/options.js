@@ -12,7 +12,8 @@ $(document).ready(function() {
             leagueIDs = leagueIDsObj.leagueIDs;
             for (var host in leagueIDs) { // do it for each host type (for now just espn, but yahoo later)
                 for (var leagueID in leagueIDs[host]) {
-                    var listItem = makeListItem(leagueIDs[host][leagueID]['league-name'], leagueID);
+                    var tieBreaker = leagueIDs[host][leagueID]['tie-breaker'];
+                    var listItem = makeListItem(leagueIDs[host][leagueID]['league-name'], leagueID, tieBreaker);
                     // add to UI
                     $('#leagueIDs-list-wrapper').append(listItem);
                 }
@@ -62,7 +63,7 @@ $(document).ready(function() {
             delete leagueIDs.espn[leagueID];
         }
 
-        function makeListItem(leagueName, leagueID) {
+        function makeListItem(leagueName, leagueID, tieBreaker = 'H2H W') {
             // league name and id
             var displayText = leagueName + ' (' + leagueID + ')'
             var newListItem = $('<div class=leagueIDs-list-item></div>');
@@ -78,13 +79,15 @@ $(document).ready(function() {
             // tie breaker
             var listItemTieBreakerDiv = $('<div class=tie-breaker></div>');
             var listItemTieBreakerText = $('<span class=tie-breaker-text>Tie Breaker: </span>');
-            var listItemTieBreakerDropDown = $('<select class=tie-breaker-drop-down><option value="H2H W">H2H Wins</option><option value="POINTS W">Points Wins</option><option value="PF">Points For</option></select>');
+            var listItemTieBreakerDropDown = $('<select class=tie-breaker-drop-down><option value=H2H W">H2H Wins</option><option value="POINTS W">Points Wins</option><option value="PF">Points For</option></select>');
+            var selectedOption = listItemTieBreakerDropDown.find('option[value="'+tieBreaker+'"]');
+            selectedOption.prop('selected', true);
             $(listItemTieBreakerDiv).append(listItemTieBreakerText);
             $(listItemTieBreakerDiv).append(listItemTieBreakerDropDown);
             $(newListItem).append(listItemTieBreakerDiv);
 
             // add to storageObj
-            leagueIDs.espn[leagueID] = {'league-name': leagueName, 'tie-breaker': 'H2H W'}; // default to H2H W
+            leagueIDs.espn[leagueID] = {'league-name': leagueName, 'tie-breaker': tieBreaker}; // default to H2H W
 
             return newListItem;
         }
