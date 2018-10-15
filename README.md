@@ -35,6 +35,8 @@ Known Issues
 
 Update Log
 ------
+* v0.12.0 (10/14/2018) 
+  * Fixed bug where only first decimal point was being used to determine ties.
 * v0.11.0 (9/22/2018) 
   * Fixed bug where selected tie breaker option wasn't showing correctly in options menu of this extension.
 * v0.10.0 (9/9/2018) 

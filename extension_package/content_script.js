@@ -123,7 +123,7 @@ function parseHTML(numOfWeeks, html, pointsResults) {
     for (var idx = 0; idx < scoresArray.length; idx++) {
         var owner = $(scoresArray[idx]).find('a').attr('title');
         allOwners.push(owner);     // build array of allOwners
-        var score = $(scoresArray[idx]).find('.score').text();
+        var score = $(scoresArray[idx]).find('.score').attr('title');   // get score from title because title has multiple decimal points
         if (score in scoreObjects) {
             scoreObjects[score].push(owner);
         }
