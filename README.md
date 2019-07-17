@@ -1,3 +1,5 @@
+~~~AFTER ESPN'S UPDATE THIS EXTENSION DOES NOT WORK. I DON'T CURRENTLY PLAN TO UPDATE IT :'( ~~~
+
 Fantasy Football Hybrid Standings
 ===========
 
